@@ -1,0 +1,45 @@
+source : http://www.brokenthorn.com/Resources/OSDev7.html
+
+**********************************
+
+LBA is the # of current sector. This is calculated in order first all the sectors from one head in this completing the first cylinder and then following on.
+The first sector is at the outermost cylinder.
+The first sector is numbered 1 but first cylinder and head is numbered 0.  
+
+CHS tuples can be mapped to LBA address with the following formula:[5][6]
+
+    LBA = (C × HPC + H) × SPT + (S - 1)
+
+where
+
+    C, H and S are the cylinder number, the head number, and the sector number
+    LBA is the logical block address
+    HPC is the maximum number of heads per cylinder (reported by disk drive, typically 16 for 28-bit LBA)
+    SPT is the maximum number of sectors per track (reported by disk drive, typically 63 for 28-bit LBA)
+
+LBA addresses can be mapped to CHS tuples with the following formula ("mod" is the modulo operation, i.e. the remainder, and "÷" is integer division, i.e. the quotient of the division where any fractional part is discarded):
+
+    C = LBA ÷ (HPC × SPT)
+    H = (LBA ÷ SPT) mod HPC Why? ---- what is wrong here? X = (C - 1)* HPC * SPT these should give no of sectors in C-1 cylinder
+    														X/SPT = head no. in that particular cylinder 
+    S = (LBA mod SPT) + 1
+    
+**********************************
+    
+Conversion of segmented addresses to absolute addresses :
+	- the segment base address is 16-bit and offset is also 16 bit but we want a 20-bit address for referencing memory.
+	- So to convert formula is : 0x1234 seg base 0x0000 offset, 0x12340+0x0000 
+	
+	
+**********************************
+
+Port Mapping, Memory Mapped I/o, DMA Controller
+	- Port Mapping individual devices has individual ports assigned to identify the device :
+		- These ports may be altogether in different address, this is called as isolated I/o
+		- If this is overlapped with memory address space the it is memory mapped I/o
+	- DMA :
+		- In both of the above cases processor has to some work to fetch the data from device which might not match with speed of processor
+		- So DMA controller handles this thing by writing or reading the data directly from memory and communicating that to I/O device
+		- A channel for communication between i/o devices and memory directly without involving CPU there.
+
+**********************************
