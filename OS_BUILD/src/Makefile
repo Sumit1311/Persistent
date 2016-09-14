@@ -9,8 +9,9 @@ kernelloader=$(join $(outputdir),KRNLDR.BIN)
 kernelbinary=$(join $(outputdir),KERNEL.BIN)
 diskimage =$(join $(outputdir),c.img)
 tempmountpt=$(join $(outputdir),tmp)
+CROSS_CC=i686-elf-gcc
 
-all: createimage $(diskimage) copykernel
+all: createimage $(diskimage) copykernel buildkernel
 
 $(diskimage):$(flatbinary)
 	dd status=noxfer conv=notrunc if=$(flatbinary) of=$(diskimage) bs=512 count=1
@@ -32,3 +33,6 @@ clean:
 	
 createimage:
 	mkdosfs -C $(diskimage) 1440
+	
+buildkernel:
+	
