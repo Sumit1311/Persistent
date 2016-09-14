@@ -1,4 +1,3 @@
-
 //****************************************************************************
 //**
 //**    [string.cpp]
@@ -39,11 +38,14 @@
 //    INTERFACE FUNCTIONS
 //============================================================================
 
-size_t strlen ( const char* str ) {
+size_t
+strlen(const char* str)
+{
 
-	size_t	len=0;
-	while (str[len++]); /* careful! MSVC++ optomization might embed call to strlen()*/
-	return len;
+  size_t len = 0;
+  while (str[len++])
+    ; /* careful! MSVC++ optomization might embed call to strlen()*/
+  return len;
 }
 
 //============================================================================
