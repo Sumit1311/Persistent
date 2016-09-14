@@ -43,3 +43,14 @@ Port Mapping, Memory Mapped I/o, DMA Controller
 		- A channel for communication between i/o devices and memory directly without involving CPU there.
 
 **********************************
+
+Link : 
+ftp://ftp.gnu.org/gnu/binutils/binutils-2.27.tar.gz
+ftp://ftp.gnu.org/gnu/gcc/gcc-6.2.0/gcc-6.2.0.tar.gz
+http://wiki.osdev.org/GCC_Cross-Compiler
+
+http://forum.osdev.org/viewtopic.php?f=1&t=27234
+http://wiki.osdev.org/Bare_Bones
+http://wiki.osdev.org/Libgcc
+http://www.brokenthorn.com/Resources/OSDevIndex.html
+http://www.scs.stanford.edu/15au-cs140/pintos/pintos_13.html#SEC168
