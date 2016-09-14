@@ -48,7 +48,7 @@ Link :
 ftp://ftp.gnu.org/gnu/binutils/binutils-2.27.tar.gz
 ftp://ftp.gnu.org/gnu/gcc/gcc-6.2.0/gcc-6.2.0.tar.gz
 http://wiki.osdev.org/GCC_Cross-Compiler
-
+http://louishust.blogspot.in/2012/11/how-to-install-bochs-with-debug.html
 http://forum.osdev.org/viewtopic.php?f=1&t=27234
 http://wiki.osdev.org/Bare_Bones
 http://wiki.osdev.org/Libgcc
