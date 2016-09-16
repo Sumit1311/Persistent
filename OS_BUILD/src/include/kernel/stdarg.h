@@ -10,7 +10,7 @@
 //    INTERFACE REQUIRED HEADERS
 //============================================================================
 
-#include <va_list.h>
+#include "va_list.h"
 
 //============================================================================
 //    INTERFACE DEFINITIONS / ENUMERATIONS / SIMPLE TYPEDEFS
@@ -25,13 +25,13 @@ extern "C"
 #define	STACKITEM	int
 
 /* round up width of objects pushed on stack. The expression before the
-& ensures that we get 0 for objects of size 0. */
+ & ensures that we get 0 for objects of size 0. */
 #define	VA_SIZE(TYPE)					\
 	((sizeof(TYPE) + sizeof(STACKITEM) - 1)	\
 		& ~(sizeof(STACKITEM) - 1))
 
 /* &(LASTARG) points to the LEFTMOST argument of the function call
-(before the ...) */
+ (before the ...) */
 #define	va_start(AP, LASTARG)	\
 	(AP=((va_list)&(LASTARG) + VA_SIZE(LASTARG)))
 

@@ -8,7 +8,7 @@
 //    IMPLEMENTATION HEADERS
 //============================================================================
 
-#include <string.h>
+#include "string.h"
 
 //============================================================================
 //    IMPLEMENTATION PRIVATE DEFINITIONS / ENUMERATIONS / SIMPLE TYPEDEFS

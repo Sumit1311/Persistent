@@ -114,18 +114,18 @@ CopyImage:
    	 rep	movsd                   ; copy image to its protected mode address
 
 TestImage:
-  	  mov    ebx, [IMAGE_PMODE_BASE+60]
-  	  add    ebx, IMAGE_PMODE_BASE    ; ebx now points to file sig (PE00)
+  	  ;mov    ebx, [IMAGE_PMODE_BASE+60]
+  	  mov    ebx, IMAGE_PMODE_BASE    ; ebx now points to file sig (PE00)
   	  mov    esi, ebx
   	  mov    edi, ImageSig
-  	  cmpsw
+	  cmpsw
   	  je     EXECUTE
   	  mov	ebx, BadImage
   	  call	Puts32
   	  cli
-  	  hlt
+  	  jmp $
 
-ImageSig db 'PE'
+ImageSig dd ".ELF"
 
 EXECUTE:
 
@@ -135,13 +135,17 @@ EXECUTE:
 
     ; parse the programs header info structures to get its entry point
 
+;add		ebx, 24
+;mov		eax, [ebx]			; _IMAGE_FILE_HEADER is 20 bytes + size of sig (4 bytes)
+;add		ebx, 20-4			; address of entry point
+;mov		ebp, dword [ebx]		; get entry point offset in code section
+;add		ebx, 12				; image base is offset 8 bytes from entry point
+;mov		eax, dword [ebx]		; add image base
+;add		ebp, eax
+	mov     ebx, IMAGE_PMODE_BASE
 	add		ebx, 24
-	mov		eax, [ebx]			; _IMAGE_FILE_HEADER is 20 bytes + size of sig (4 bytes)
-	add		ebx, 20-4			; address of entry point
-	mov		ebp, dword [ebx]		; get entry point offset in code section
-	add		ebx, 12				; image base is offset 8 bytes from entry point
-	mov		eax, dword [ebx]		; add image base
-	add		ebp, eax
+	mov		ebp,dword [ebx]
+	;add		ebp, eax
 	cli
 
 	call	ebp               	      ; Execute Kernel

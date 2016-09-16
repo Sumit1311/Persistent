@@ -35,7 +35,7 @@ debug_printf (const char* str, ...);
 extern unsigned
 debug_set_color (const unsigned c);
 extern void
-debu_goto_xy (unsigned x, unsigned y);
+debug_goto_xy (unsigned x, unsigned y);
 
 //============================================================================
 //    INTERFACE OBJECT CLASS DEFINITIONS

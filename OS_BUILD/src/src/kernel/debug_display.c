@@ -8,9 +8,9 @@
 //    IMPLEMENTATION HEADERS
 //============================================================================
 
-#include <stdarg.h>
-#include <string.h>
-#include "include/kernel/debug_display.h"
+#include "stdarg.h"
+#include "string.h"
+#include "debug_display.h"
 
 //============================================================================
 //    IMPLEMENTATION PRIVATE DEFINITIONS / ENUMERATIONS / SIMPLE TYPEDEFS
@@ -51,7 +51,7 @@ static unsigned _color = 0;
 //============================================================================
 
 void
-debug_putc (unsigned char c)
+debug_putc(unsigned char c)
 {
 
   if (c == 0)
@@ -83,7 +83,7 @@ char bchars[] =
       'F' };
 
 void
-itoa (unsigned i, unsigned base, char* buf)
+itoa(unsigned i, unsigned base, char* buf)
 {
   int pos = 0;
   int opos = 0;
@@ -111,7 +111,7 @@ itoa (unsigned i, unsigned base, char* buf)
 }
 
 void
-itoa_s (int i, unsigned base, char* buf)
+itoa_s(int i, unsigned base, char* buf)
 {
   if (base > 16)
     return;
@@ -120,7 +120,7 @@ itoa_s (int i, unsigned base, char* buf)
       *buf++ = '-';
       i *= -1;
     }
-  itoa (i, base, buf);
+  itoa(i, base, buf);
 }
 
 //============================================================================
@@ -128,7 +128,7 @@ itoa_s (int i, unsigned base, char* buf)
 //============================================================================
 
 unsigned
-debug_set_color (const unsigned c)
+debug_set_color(const unsigned c)
 {
 
   unsigned t = _color;
@@ -137,7 +137,7 @@ debug_set_color (const unsigned c)
 }
 
 void
-debug_goto_xy (unsigned x, unsigned y)
+debug_goto_xy(unsigned x, unsigned y)
 {
 
   // reposition starting vectors for next text to follow
@@ -149,7 +149,7 @@ debug_goto_xy (unsigned x, unsigned y)
 }
 
 void
-debug_clr_scr (const unsigned short c)
+debug_clr_scr(const unsigned short c)
 {
 
   unsigned char* p = (unsigned char*) VID_MEMORY;
@@ -167,18 +167,18 @@ debug_clr_scr (const unsigned short c)
 }
 
 void
-debug_puts (char* str)
+debug_puts(char* str)
 {
 
   if (!str)
     return;
 
-  for (size_t i = 0; i < strlen (str); i++)
-    debug_putc (str[i]);
+  for (size_t i = 0; i < strlen(str); i++)
+    debug_putc(str[i]);
 }
 
 int
-debug_printf (const char* str, ...)
+debug_printf(const char* str, ...)
 {
 
   if (!str)
@@ -187,75 +187,75 @@ debug_printf (const char* str, ...)
   va_list args;
   va_start(args, str);
 
-  for (size_t i = 0; i < strlen (str); i++)
+  for (size_t i = 0; i < strlen(str); i++)
     {
 
       switch (str[i])
-	{
+        {
 
-	case '%':
+      case '%':
 
-	  switch (str[i + 1])
-	    {
+        switch (str[i + 1])
+          {
 
-	    /*** characters ***/
-	    case 'c':
-	      {
-		char c = va_arg(args, char);
-		debug_putc (c);
-		i++;		// go to next character
-		break;
-	      }
+        /*** characters ***/
+        case 'c':
+          {
+            char c = va_arg(args, char);
+            debug_putc(c);
+            i++;		// go to next character
+            break;
+          }
 
-	      /*** address of ***/
-	    case 's':
-	      {
-		int c = (int&) va_arg (args, char);
-		char str[32] =
-		  { 0 };
-		itoa_s (c, 16, str);
-		DebugPuts (str);
-		i++;		// go to next character
-		break;
-	      }
+          /*** address of ***/
+        case 's':
+          {
+            int c = (int ) va_arg (args, char);
+            char str[32] =
+              { 0 };
+            itoa_s(c, 16, str);
+            debug_puts(str);
+            i++;		// go to next character
+            break;
+          }
 
-	      /*** integers ***/
-	    case 'd':
-	    case 'i':
-	      {
-		int c = va_arg(args, int);
-		char str[32] =
-		  { 0 };
-		itoa_s (c, 10, str);
-		DebugPuts (str);
-		i++;		// go to next character
-		break;
-	      }
+          /*** integers ***/
+        case 'd':
+        case 'i':
+          {
+            int c = va_arg(args, int);
+            char str[32] =
+              { 0 };
+            itoa_s(c, 10, str);
+            debug_puts(str);
+            i++;		// go to next character
+            break;
+          }
 
-	      /*** display in hex ***/
-	    case 'X':
-	    case 'x':
-	      {
-		int c = va_arg(args, int);
-		char str[32] =
-		  { 0 };
-		itoa_s (c, 16, str);
-		DebugPuts (str);
-		i++;		// go to next character
-		break;
-	      }
+          /*** display in hex ***/
+        case 'X':
+        case 'x':
+          {
+            int c = va_arg(args, int);
+            char str[32] =
+              { 0 };
+            itoa_s(c, 16, str);
+            debug_puts(str);
+            i++;		// go to next character
+            break;
+          }
 
-	    default:
-	      va_end (args);
-	      return 1;
-	    }
+        default:
+          va_end (args);
+          return 1;
+          }
 
-	  break;
+        break;
 
-	default:
-	  debug_putc (str[i]);
-	  break;
-	}
+      default:
+        debug_putc(str[i]);
+        break;
+        }
 
     }
 

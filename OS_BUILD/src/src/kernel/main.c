@@ -5,9 +5,9 @@
  ======================================
  */
 
-#include "include/kernel/debug_display.h"
+#include "debug_display.h"
 
-void _cdecl main ()
+void main ()
   {
 
     int i=0x12;

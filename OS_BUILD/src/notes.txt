@@ -54,3 +54,13 @@ http://wiki.osdev.org/Bare_Bones
 http://wiki.osdev.org/Libgcc
 http://www.brokenthorn.com/Resources/OSDevIndex.html
 http://www.scs.stanford.edu/15au-cs140/pintos/pintos_13.html#SEC168
+
+
+Basic :
+
+    Word: a 2-byte data item
+    Doubleword: a 4-byte (32 bit) data item
+    Quadword: an 8-byte (64 bit) data item
+    Paragraph: a 16-byte (128 bit) area
+    Kilobyte: 1024 bytes
+    Megabyte: 1,048,576 bytes
