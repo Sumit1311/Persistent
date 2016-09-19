@@ -1,4 +1,3 @@
-
 %ifndef _COMMON_INC_INCLUDED
 %define _COMMON_INC_INCLUDED
 
