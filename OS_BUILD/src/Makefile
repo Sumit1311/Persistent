@@ -43,13 +43,13 @@ clean:
 createimage: | $(execoutputdir)
 	mkdosfs -C $(diskimage) 1440
 	
-$(kernelbinary):$(join $(buildoutputdir) ,bare_bones.o) | $(execoutputdir)
-	$(CROSS_CC) -v -T $(srcdir)/kernel/linker.ld -o $@ -ffreestanding -O2 -nostdlib $(join $(buildoutputdir) ,bare_bones.o) -lgcc
-#$(kernelbinary):$(OBJS) | $(execoutputdir)
+#$(kernelbinary):$(join $(buildoutputdir) ,bare_bones.o) | $(execoutputdir)
+#	$(CROSS_CC) -v -T $(srcdir)/kernel/linker.ld -o $@ -ffreestanding -O2 -nostdlib $(join $(buildoutputdir) ,bare_bones.o) -lgcc
+$(kernelbinary):$(OBJS) | $(execoutputdir)
 # for flat binary kernel
 #   $(join $(srcdir),kernel.asm) prereq
 #	nasm -O0 -w+orphan-labels -f bin -o $@ $< command 
-#	$(CROSS_CC) -v -T $(srcdir)/kernel/linker.ld -o $@ -ffreestanding -O2 -nostdlib $(OBJS) -lgcc 
+	$(CROSS_CC) -v -T $(srcdir)/kernel/linker.ld -o $@ -ffreestanding -O2 -nostdlib $(OBJS) -lgcc 
 
 $(join $(buildoutputdir) ,bare_bones.o):bare_bones.c | $(buildoutputdir)
 	$(CROSS_CC) $(CC_FLAGS) -c  $< -o $@

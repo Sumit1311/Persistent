@@ -87,6 +87,20 @@ bits 32
 
 BadImage db "*** FATAL: Invalid or corrupt kernel image. Halting system.", 0
 
+; Copies asegment from ELF file to the given protected mode address.
+;
+;	Size of segment in number of bytes : ecx
+;	Address of segment in real mode image : eax
+;	Address of segment in protected mode image : ebx
+;
+CopySegment:
+	 cld
+   	 mov    esi, eax
+   	 mov	edi, ebx
+   	 ;mov	ecx, eax
+   	 rep	movsb                   ; copy image to its protected mode address
+	ret
+
 Stage3:
 
 	;-------------------------------;
@@ -102,16 +116,27 @@ Stage3:
 	call	ClrScr32
 
 CopyImage:
-  	 mov	eax, dword [ImageSize]
-  	 movzx	ebx, word [bpbBytesPerSector]
-  	 mul	ebx
-  	 mov	ebx, 4
-  	 div	ebx
-   	 cld
-   	 mov    esi, IMAGE_RMODE_BASE
-   	 mov	edi, IMAGE_PMODE_BASE
-   	 mov	ecx, eax
-   	 rep	movsd                   ; copy image to its protected mode address
+	mov 	eax, dword [IMAGE_RMODE_BASE+52+4]
+	add 	eax, IMAGE_RMODE_BASE
+	mov 	ebx, dword [IMAGE_RMODE_BASE+52+12]
+	mov 	ecx, dword [IMAGE_RMODE_BASE+52+20]
+	call 	CopySegment
+	mov 	eax, dword [IMAGE_RMODE_BASE+52+32+4]
+	add 	eax, IMAGE_RMODE_BASE
+	mov 	ebx, dword [IMAGE_RMODE_BASE+52+32+12]
+	mov 	ecx, dword [IMAGE_RMODE_BASE+52+32+20]
+	call 	CopySegment
+;  	 mov	eax, dword [ImageSize]
+;  	 movzx	ebx, word [bpbBytesPerSector]
+;  	 mul	ebx
+;  	 mov	ebx, 4
+;  	 div	ebx
+;   	 cld
+;   	 mov    esi, IMAGE_RMODE_BASE
+;   	 mov	edi, IMAGE_PMODE_BASE
+;   	 mov	ecx, eax
+;   	 rep	movsd                   ; copy image to its protected mode address
+;
 
 TestImage:
   	  ;mov    ebx, [IMAGE_PMODE_BASE+60]
@@ -143,8 +168,8 @@ EXECUTE:
 ;add		ebx, 12				; image base is offset 8 bytes from entry point
 ;mov		eax, dword [ebx]		; add image base
 ;add		ebp, eax
-	mov     ebx, IMAGE_PMODE_BASE
-	add		ebx, 0x18
+	mov     ebx, IMAGE_RMODE_BASE
+	add		ebx, 24
 	mov		ebp,dword [ebx]
 	;add		ebp, eax
 	cli
