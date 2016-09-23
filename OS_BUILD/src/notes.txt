@@ -54,6 +54,7 @@ http://wiki.osdev.org/Bare_Bones
 http://wiki.osdev.org/Libgcc
 http://www.brokenthorn.com/Resources/OSDevIndex.html
 http://www.scs.stanford.edu/15au-cs140/pintos/pintos_13.html#SEC168
+http://www.muppetlabs.com/~breadbox/software/ELF.txt : ELF file loading and other stuff.
 
 
 Basic :

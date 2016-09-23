@@ -119,13 +119,14 @@ TestImage:
   	  mov    esi, ebx
   	  mov    edi, ImageSig
 	  cmpsw
+	  jmp EXECUTE
   	  je     EXECUTE
   	  mov	ebx, BadImage
   	  call	Puts32
   	  cli
   	  jmp $
 
-ImageSig dd ".ELF"
+ImageSig db "ELF"
 
 EXECUTE:
 
@@ -143,7 +144,7 @@ EXECUTE:
 ;mov		eax, dword [ebx]		; add image base
 ;add		ebp, eax
 	mov     ebx, IMAGE_PMODE_BASE
-	add		ebx, 24
+	add		ebx, 0x18
 	mov		ebp,dword [ebx]
 	;add		ebp, eax
 	cli
