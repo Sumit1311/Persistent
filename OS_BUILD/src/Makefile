@@ -12,11 +12,12 @@ diskimage =$(join $(execoutputdir),c.img)
 tempmountpt=$(join $(execoutputdir),tmp)
 CROSS_CC=i686-elf-gcc
 CC_FLAGS=-std=gnu99 -ffreestanding -O2 -Wall -Wextra -iquote include/kernel/
-OBJS=$(join $(buildoutputdir) ,debug_display.o) $(join $(buildoutputdir) ,entry.o) $(join $(buildoutputdir) , string.o) $(join $(buildoutputdir) , main.o)
+OBJS=$(join $(buildoutputdir) ,debug_display.o) $(join $(buildoutputdir) ,entry.o) $(join $(buildoutputdir) , string.o) $(join $(buildoutputdir) , main.o) $(join $(buildoutputdir) , archx86.o)
  
 vpath %.inc include
 vpath %.h include/kernel
 vpath %.c src/kernel
+vpath %.S src/kernel
 vpath %.ld src/kernel
 vpath %.asm src
 vpath %.c lib
@@ -64,6 +65,9 @@ $(join $(buildoutputdir),string.o) : string.c string.h | $(buildoutputdir)
 	$(CROSS_CC) $(CC_FLAGS) -c $< -o $@
 	
 $(join $(buildoutputdir),main.o) : main.c debug_display.h | $(buildoutputdir)
+	$(CROSS_CC) $(CC_FLAGS) -c $< -o $@
+	
+$(join $(buildoutputdir),archx86.o) : archx86.S | $(buildoutputdir)
 	$(CROSS_CC) $(CC_FLAGS) -c $< -o $@
 	
 $(execoutputdir) :
