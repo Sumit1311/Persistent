@@ -12,7 +12,9 @@ diskimage =$(join $(execoutputdir),c.img)
 tempmountpt=$(join $(execoutputdir),tmp)
 CROSS_CC=i686-elf-gcc
 CC_FLAGS=-std=gnu99 -ffreestanding -O2 -Wall -Wextra -iquote include/kernel/
-OBJS=$(join $(buildoutputdir) ,debug_display.o) $(join $(buildoutputdir) ,entry.o) $(join $(buildoutputdir) , string.o) $(join $(buildoutputdir) , main.o)
+OBJS=$(patsubst %.o,$(join $(buildoutputdir),%.o),$(_OBJS))
+_OBJS= debug_display.o entry.o string.o main.o
+LD_SCRIPT=linker.ld
  
 vpath %.inc include
 vpath %.h include/kernel
@@ -45,26 +47,22 @@ createimage: | $(execoutputdir)
 	
 #$(kernelbinary):$(join $(buildoutputdir) ,bare_bones.o) | $(execoutputdir)
 #	$(CROSS_CC) -v -T $(srcdir)/kernel/linker.ld -o $@ -ffreestanding -O2 -nostdlib $(join $(buildoutputdir) ,bare_bones.o) -lgcc
-$(kernelbinary):$(OBJS) | $(execoutputdir)
+$(kernelbinary):$(OBJS) $(LD_SCRIPT) | $(execoutputdir)
 # for flat binary kernel
 #   $(join $(srcdir),kernel.asm) prereq
 #	nasm -O0 -w+orphan-labels -f bin -o $@ $< command 
 	$(CROSS_CC) -v -T $(srcdir)/kernel/linker.ld -o $@ -ffreestanding -O2 -nostdlib $(OBJS) -lgcc 
 
-$(join $(buildoutputdir) ,bare_bones.o):bare_bones.c | $(buildoutputdir)
+#$(join $(buildoutputdir) ,bare_bones.o):bare_bones.c | $(buildoutputdir)
+#	$(CROSS_CC) $(CC_FLAGS) -c  $< -o $@
+
+$(join $(buildoutputdir),%.o) :%.c %.dep | $(buildoutputdir)
 	$(CROSS_CC) $(CC_FLAGS) -c  $< -o $@
 
-$(join $(buildoutputdir),debug_display.o) : debug_display.c debug_display.h | $(buildoutputdir)
-	$(CROSS_CC) $(CC_FLAGS) -c  $< -o $@
-
-$(join $(buildoutputdir),entry.o) : entry.c  | $(buildoutputdir)
-	$(CROSS_CC) $(CC_FLAGS) -c  $< -o $@
-
-$(join $(buildoutputdir),string.o) : string.c string.h | $(buildoutputdir)
-	$(CROSS_CC) $(CC_FLAGS) -c $< -o $@
-	
-$(join $(buildoutputdir),main.o) : main.c debug_display.h | $(buildoutputdir)
-	$(CROSS_CC) $(CC_FLAGS) -c $< -o $@
+main.dep:debug_display.h ;
+entry.dep: ;
+string.dep:string.h;
+debug_display.dep:debug_display.h;
 	
 $(execoutputdir) :
 	mkdir $@
