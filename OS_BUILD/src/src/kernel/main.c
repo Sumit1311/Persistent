@@ -37,5 +37,4 @@ main ()
   debug_printf ("\n\nI am preparing to load... Hold on, please... :)");
 
   hal_initialize ();
-
 }

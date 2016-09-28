@@ -19,6 +19,7 @@ LD_SCRIPT=linker.ld
 vpath %.inc include
 vpath %.h include/kernel
 vpath %.c src/kernel
+vpath %.S src/kernel
 vpath %.ld src/kernel
 vpath %.asm src
 vpath %.c lib
@@ -63,6 +64,9 @@ main.dep:debug_display.h ;
 entry.dep: ;
 string.dep:string.h;
 debug_display.dep:debug_display.h;
+	
+$(join $(buildoutputdir),archx86.o) : archx86.S | $(buildoutputdir)
+	$(CROSS_CC) $(CC_FLAGS) -c $< -o $@
 	
 $(execoutputdir) :
 	mkdir $@
