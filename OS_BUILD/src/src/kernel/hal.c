@@ -1,4 +1,3 @@
-
 //****************************************************************************
 //**
 //**    Hal.cpp
@@ -10,15 +9,11 @@
 //**
 //****************************************************************************
 
-#ifndef ARCH_X86
-#error "[hal.cpp for i86] requires i86 architecture. Define ARCH_X86"
-#endif
-
 //============================================================================
 //    IMPLEMENTATION HEADERS
 //============================================================================
 
-#include <Hal.h>
+#include "hal.h"
 #include "cpu.h"
 #include "idt.h"
 
@@ -51,30 +46,38 @@
 //============================================================================
 
 //! initialize hardware devices
-int _cdecl hal_initialize () {
+int
+hal_initialize()
+{
 
-	i86_cpu_initialize ();
-	return 0;
+  i86_cpu_initialize();
+  return 0;
 }
 
 //! shutdown hardware devices
-int _cdecl hal_shutdown () {
+int
+hal_shutdown()
+{
 
-	i86_cpu_shutdown ();
-	return 0;
+  i86_cpu_shutdown();
+  return 0;
 }
 
 //! generate interrupt call
-void _cdecl geninterrupt (int n) {
-#ifdef _MSC_VER
-	_asm {
-		mov al, byte ptr [n]
-		mov byte ptr [genint+1], al
-		jmp genint
-	genint:
-		int 0	// above code modifies the 0 to int number to generate
-	}
-#endif
+void
+geninterrupt(int n)
+{
+  _gen_interrupt(n);
+  /*#ifdef _MSC_VER
+   _asm
+   {
+   mov al, byte ptr [n]
+   mov byte ptr [genint+1], al
+   jmp genint
+   genint:
+   int 0	// above code modifies the 0 to int number to generate
+   }
+   #endif*/
 }
 
 //============================================================================

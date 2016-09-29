@@ -11,13 +11,14 @@ kernelbinary=$(join $(execoutputdir),KERNEL.BIN)
 diskimage =$(join $(execoutputdir),c.img)
 tempmountpt=$(join $(execoutputdir),tmp)
 CROSS_CC=i686-elf-gcc
-CC_FLAGS=-std=gnu99 -ffreestanding -O2 -Wall -Wextra -iquote include/kernel/
+CC_FLAGS=-std=gnu99 -ffreestanding -O2 -Wall -Wextra -iquote include/kernel/ -iquote include/lib/
 OBJS=$(patsubst %.o,$(join $(buildoutputdir),%.o),$(_OBJS))
-_OBJS= debug_display.o entry.o string.o main.o
+_OBJS= debug_display.o entry.o string.o main.o archx86.o cpu.o gdt.o hal.o idt.o stdio.o
 LD_SCRIPT=linker.ld
  
 vpath %.inc include
 vpath %.h include/kernel
+vpath %.h include/lib
 vpath %.c src/kernel
 vpath %.S src/kernel
 vpath %.ld src/kernel
@@ -52,7 +53,7 @@ $(kernelbinary):$(OBJS) $(LD_SCRIPT) | $(execoutputdir)
 # for flat binary kernel
 #   $(join $(srcdir),kernel.asm) prereq
 #	nasm -O0 -w+orphan-labels -f bin -o $@ $< command 
-	$(CROSS_CC) -v -T $(srcdir)/kernel/linker.ld -o $@ -ffreestanding -O2 -nostdlib $(OBJS) -lgcc 
+	$(CROSS_CC) -v -T $(srcdir)kernel/linker.ld -o $@ -ffreestanding -O2 -nostdlib $(OBJS) -lgcc 
 
 #$(join $(buildoutputdir) ,bare_bones.o):bare_bones.c | $(buildoutputdir)
 #	$(CROSS_CC) $(CC_FLAGS) -c  $< -o $@
@@ -64,6 +65,11 @@ main.dep:debug_display.h ;
 entry.dep: ;
 string.dep:string.h;
 debug_display.dep:debug_display.h;
+cpu.dep: cpu.h gdt.h idt.h;
+gdt.dep: gdt.h string.h;
+idt.dep: idt.h string.h hal.h debug_display.h;
+hal.dep: cpu.h gdt.h idt.h;
+stdio.dep: string.h stdio.h;
 	
 $(join $(buildoutputdir),archx86.o) : archx86.S | $(buildoutputdir)
 	$(CROSS_CC) $(CC_FLAGS) -c $< -o $@

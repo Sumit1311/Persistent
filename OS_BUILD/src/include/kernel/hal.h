@@ -14,25 +14,17 @@
 //**
 //****************************************************************************
 
-#ifndef ARCH_X86
-#pragma error "HAL not implimented for this platform"
-#endif
-
 //============================================================================
 //    INTERFACE REQUIRED HEADERS
 //============================================================================
 
-#include <stdint.h>
+#include "stdint.h"
 
 //============================================================================
 //    INTERFACE DEFINITIONS / ENUMERATIONS / SIMPLE TYPEDEFS
 //============================================================================
 
-#ifdef _MSC_VER
-#define interrupt __declspec (naked)
-#else
 #define interrupt
-#endif
 
 #define far
 #define near
@@ -51,13 +43,16 @@
 //============================================================================
 
 //! initialize hardware abstraction layer
-extern	int				_cdecl	hal_initialize ();
+extern int
+hal_initialize();
 
 //! shutdown hardware abstraction layer
-extern	int				_cdecl	hal_shutdown ();
+extern int
+hal_shutdown();
 
 //! generates interrupt
-extern	void			_cdecl	geninterrupt (int n);
+extern void
+geninterrupt(int n);
 
 //============================================================================
 //    INTERFACE OBJECT CLASS DEFINITIONS

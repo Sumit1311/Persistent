@@ -2,6 +2,9 @@
 .globl kernel_entry
 .globl clear
 .global intialize
+.global load_local_gdt
+.global load_idt
+.global _gen_interrupt
 
 intialize:
 	  cli			// clear interrupts--Do not enable them yet
@@ -18,3 +21,27 @@ intialize:
 
 clear:
 	cli
+
+load_local_gdt:
+	pushl %ebp
+	movl %esp,%ebp
+	lgdt -8(%ebp)
+	popl %ebp
+	ret
+
+load_idt:
+	pushl %ebp
+	movl %esp,%ebp
+	lidt -8(%ebp)
+	popl %ebp
+	ret
+
+_gen_interrupt:
+	pushl %ebp
+	movl %esp,%ebp
+	movl -8(%ebp),%eax
+	int %al
+	popl %ebp
+	ret
+
+
