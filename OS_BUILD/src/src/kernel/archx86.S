@@ -25,22 +25,30 @@ clear:
 load_local_gdt:
 	pushl %ebp
 	movl %esp,%ebp
-	lgdt -8(%ebp)
+	mov 8(%ebp),%eax
+	lgdt (%eax)
 	popl %ebp
 	ret
 
 load_idt:
 	pushl %ebp
 	movl %esp,%ebp
-	lidt -8(%ebp)
+	mov 8(%ebp),%eax
+	lidt (%eax)
 	popl %ebp
 	ret
+
+genint:
+	int $0x00
+	jmp _exit_routine
 
 _gen_interrupt:
 	pushl %ebp
 	movl %esp,%ebp
-	movl -8(%ebp),%eax
-	int %al
+	movl 8(%ebp),%eax
+	movb %al, (genint+1)
+	jmp genint
+_exit_routine:
 	popl %ebp
 	ret
 

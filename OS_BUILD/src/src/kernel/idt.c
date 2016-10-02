@@ -14,9 +14,7 @@
 #include "idt.h"
 #include "string.h"
 #include "hal.h"
-#ifdef _DEBUG
 #include "debug_display.h"
-#endif
 
 //============================================================================
 //    IMPLEMENTATION PRIVATE DEFINITIONS / ENUMERATIONS / SIMPLE TYPEDEFS
@@ -38,9 +36,9 @@ struct idtr
 
   //! size of the interrupt descriptor table (idt)
   uint16_t limit;
-
   //! base address of idt
-  uint32_t base;
+    uint32_t base;
+
 }__attribute__((packed));
 
 /*#ifdef _MSC_VER
@@ -93,12 +91,12 @@ static void
 i86_default_handler()
 {
 
-#ifdef _DEBUG
-  debug_clr_scr (0x18);
-  debug_goto_xy (0,0);
-  debug_set_color (0x1e);
+//#ifdef _DEBUG
+  debug_clr_scr(0x18);
+  debug_goto_xy(0, 0);
+  debug_set_color(0x1e);
   debug_puts("*** [i86 Hal] i86_default_handler: Unhandled Exception");
-#endif
+//#endif
 
   for (;;)
     ;

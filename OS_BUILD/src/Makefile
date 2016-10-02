@@ -14,7 +14,19 @@ CROSS_CC=i686-elf-gcc
 CC_FLAGS=-std=gnu99 -ffreestanding -O2 -Wall -Wextra -iquote include/kernel/ -iquote include/lib/
 OBJS=$(patsubst %.o,$(join $(buildoutputdir),%.o),$(_OBJS))
 _OBJS= debug_display.o entry.o string.o main.o archx86.o cpu.o gdt.o hal.o idt.o stdio.o
-LD_SCRIPT=linker.ld
+LD_SCRIPT=$(join $(srcdir)kernel/,linker.ld)
+KERNEL_LOADER_INCLUDE=stdio.inc gdt.inc A20.inc fat12.inc common.inc oem_block.inc
+.PHONY: copyflatbinary copykernel main.dep entry.dep string.dep debug_display.dep cpu.dep gdt.dep idt.dep hal.dep stdio.dep clean all
+define COPY_FLAT =
+nasm -O0 -w+orphan-labels -f bin -o $@ $<
+dd status=noxfer conv=notrunc if=$< of=$(diskimage) bs=512 count=1
+endef
+
+define COPY_KERNEL_LOADER=
+endef
+
+define COPY_KERNEL =
+endef
  
 vpath %.inc include
 vpath %.h include/kernel
@@ -25,36 +37,31 @@ vpath %.ld src/kernel
 vpath %.asm src
 vpath %.c lib
 
-all: createimage $(diskimage) $(kernelbinary) copykernel | $(buildoutputdir)
+all: $(flatbinary) copykernel | $(buildoutputdir);
 
-$(diskimage):$(flatbinary) | $(execoutputdir)
-	dd status=noxfer conv=notrunc if=$< of=$@ bs=512 count=1
-
+$(diskimage):| $(execoutputdir)
+	mkdosfs -C $@ 1440
+	
+copyflatbinary: $(flatbinary) | $(execoutputdir) $(diskimage)
+	
+	
 $(flatbinary):$(join $(srcdir),boot_loader.asm) | $(execoutputdir)
-	nasm -O0 -w+orphan-labels -f bin -o $@ $<
+	$(COPY_FLAT)	
 
-copykernel:$(kernelloader) | $(execoutputdir)
-	sudo mkdir $(tempmountpt) && sudo mount -t vfat -o loop $(diskimage) $(tempmountpt) && \
+copykernel:$(kernelloader) $(kernelbinary) | $(execoutputdir) $(diskimage) $(tempmountpt)
+	sudo mount -t vfat -o loop $(diskimage) $(tempmountpt) && \
 	sudo cp $(kernelloader) $(tempmountpt) && sudo cp $(kernelbinary) $(tempmountpt)
 
-$(kernelloader):$(join $(srcdir),boot_loader2.asm) $(wildcard %.inc) | $(execoutputdir)
+$(kernelloader):$(join $(srcdir),boot_loader2.asm) $(KERNEL_LOADER_INCLUDE) | $(execoutputdir)
 	nasm -O0 -w+orphan-labels -f bin -o $@ $<
-	
-.PHONY: clean		
-clean:
-	rm -rf $(execoutputdir) && rm -rf $(buildoutputdir)
-	
-createimage: | $(execoutputdir)
-	mkdosfs -C $(diskimage) 1440
-	
+
+$(kernelbinary):$(OBJS) $(LD_SCRIPT) | $(execoutputdir)	
+	$(CROSS_CC) -v -T $(srcdir)kernel/linker.ld -o $@ -ffreestanding -O2 -nostdlib $(OBJS) -lgcc
 #$(kernelbinary):$(join $(buildoutputdir) ,bare_bones.o) | $(execoutputdir)
 #	$(CROSS_CC) -v -T $(srcdir)/kernel/linker.ld -o $@ -ffreestanding -O2 -nostdlib $(join $(buildoutputdir) ,bare_bones.o) -lgcc
-$(kernelbinary):$(OBJS) $(LD_SCRIPT) | $(execoutputdir)
 # for flat binary kernel
 #   $(join $(srcdir),kernel.asm) prereq
-#	nasm -O0 -w+orphan-labels -f bin -o $@ $< command 
-	$(CROSS_CC) -v -T $(srcdir)kernel/linker.ld -o $@ -ffreestanding -O2 -nostdlib $(OBJS) -lgcc 
-
+#	nasm -O0 -w+orphan-labels -f bin -o $@ $< command  
 #$(join $(buildoutputdir) ,bare_bones.o):bare_bones.c | $(buildoutputdir)
 #	$(CROSS_CC) $(CC_FLAGS) -c  $< -o $@
 
@@ -79,3 +86,9 @@ $(execoutputdir) :
 	
 $(buildoutputdir) :
 	mkdir $@
+	
+$(tempmountpt):|$(execoutputdir)
+	mkdir $@
+		
+clean:
+	rm -rf $(execoutputdir) && rm -rf $(buildoutputdir)

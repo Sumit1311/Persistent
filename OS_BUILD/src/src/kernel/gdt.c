@@ -36,7 +36,7 @@ struct gdtr
   //! size of gdt
   uint16_t m_limit;
 
-  //! base address of gdt
+//! base address of gdt
   uint32_t m_base;
 }__attribute__((packed));
 
