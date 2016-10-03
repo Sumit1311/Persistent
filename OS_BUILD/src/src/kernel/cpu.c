@@ -74,18 +74,7 @@ i86_cpu_get_vender ()
 
   static char vender[32] =
     { 0 };
-
-#ifdef _MSC_VER
-  _asm
-    {
-      mov eax, 0
-      cpuid
-      mov dword ptr [vender], ebx
-      mov dword ptr [vender+4], edx
-      mov dword ptr [vender+8], ecx
-    }
-#endif
-
+  _get_cpu_info (vender);
   return vender;
 }
 

@@ -5,6 +5,7 @@
 .global load_local_gdt
 .global load_idt
 .global _gen_interrupt
+.global _get_cpu_info
 
 intialize:
 	  cli			// clear interrupts--Do not enable them yet
@@ -52,4 +53,17 @@ _exit_routine:
 	popl %ebp
 	ret
 
-
+_get_cpu_info:
+	movl 0,%eax
+    pushl %ebp
+	movl %esp,%ebp
+    cpuid
+    pushl %ecx
+    pushl %edx
+    pushl %ebx
+	movl 8(%ebp),%eax
+	popl (%eax)
+	popl (%eax+4)
+	popl (%eax+8)
+	popl %ebp
+	ret
