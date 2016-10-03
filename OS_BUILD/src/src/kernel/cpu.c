@@ -50,21 +50,43 @@
 
 //! Initializes cpu resources
 int
-i86_cpu_initialize()
+i86_cpu_initialize ()
 {
 
   //! initialize processor tables
-  i86_gdt_initialize();
-  i86_idt_initialize(0x8);
+  i86_gdt_initialize ();
+  i86_idt_initialize (0x8);
 
   return 0;
 }
 
 //! shuts down cpu resources...Nothing to do yet
 void
-i86_cpu_shutdown()
+i86_cpu_shutdown ()
 {
 
+}
+
+//! returns vender name of cpu
+char*
+i86_cpu_get_vender ()
+{
+
+  static char vender[32] =
+    { 0 };
+
+#ifdef _MSC_VER
+  _asm
+    {
+      mov eax, 0
+      cpuid
+      mov dword ptr [vender], ebx
+      mov dword ptr [vender+4], edx
+      mov dword ptr [vender+8], ecx
+    }
+#endif
+
+  return vender;
 }
 
 //============================================================================

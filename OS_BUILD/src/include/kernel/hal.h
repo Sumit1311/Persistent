@@ -44,15 +44,57 @@
 
 //! initialize hardware abstraction layer
 extern int
-hal_initialize();
+hal_initialize ();
 
 //! shutdown hardware abstraction layer
 extern int
-hal_shutdown();
+hal_shutdown ();
 
 //! generates interrupt
 extern void
-geninterrupt(int n);
+geninterrupt (int n);
+
+//! notifies hal interrupt is done
+extern void
+interruptdone (unsigned int intno);
+
+//! output sound to speaker
+extern void
+sound (unsigned frequency);
+
+//! read byte from device using port mapped io
+extern unsigned char
+inportb (unsigned short portid);
+
+//! write byte to device through port mapped io
+extern void
+outportb (unsigned short portid, unsigned char value);
+
+//! enables all hardware interrupts
+extern void
+enable ();
+
+//! disable all hardware interrupts
+extern void
+disable ();
+
+//! sets new interrupt vector
+extern void
+setvect (int intno, void
+( far &vect) ());
+
+//! returns current interrupt vector
+extern void
+( far *
+getvect (int intno)) ( );
+
+//! returns cpu vender
+externconstchar*
+get_cpu_vender ();
+
+//! returns current tick count (only for demo)
+extern int
+get_tick_count ();
 
 //============================================================================
 //    INTERFACE OBJECT CLASS DEFINITIONS
