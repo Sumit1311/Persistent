@@ -99,7 +99,7 @@ _outport_write:
 	pushl %ebp
 	movl %esp,%ebp
 	movw 8(%ebp),%dx //portid
-	movb 10(%ebp),%al //value
+	movb 12(%ebp),%al //value
   	out %al,%dx
   	popl %ebp
   	ret

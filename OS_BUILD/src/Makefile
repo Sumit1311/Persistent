@@ -17,15 +17,6 @@ _OBJS= debug_display.o entry.o string.o main.o archx86.o cpu.o gdt.o hal.o idt.o
 LD_SCRIPT=$(join $(srcdir)kernel/,linker.ld)
 KERNEL_LOADER_INCLUDE=stdio.inc gdt.inc A20.inc fat12.inc common.inc oem_block.inc
 .PHONY: copyflatbinary copykernel main.dep entry.dep string.dep debug_display.dep cpu.dep gdt.dep idt.dep hal.dep stdio.dep clean all pic.dep pit.dep exception.dep panic.dep
-define COPY_FLAT =
-
-endef
-
-define COPY_KERNEL_LOADER=
-endef
-
-define COPY_KERNEL =
-endef
  
 vpath %.inc include
 vpath %.h include/kernel
@@ -76,10 +67,10 @@ gdt.dep: gdt.h string.h;
 idt.dep: idt.h string.h hal.h debug_display.h;
 hal.dep: cpu.h gdt.h idt.h;
 stdio.dep: string.h stdio.h;
-pic.dep:hal.h pic.h
-pit.dep:hal.h pit.h idt.h pic.h
-exception.dep: exception.h hal.h
-panic.dep: hal.h stdarg.h debug_display.h
+pic.dep:hal.h pic.h;
+pit.dep:hal.h pit.h idt.h pic.h;
+exception.dep: exception.h hal.h;
+panic.dep: hal.h stdarg.h debug_display.h;
 	
 $(join $(buildoutputdir),archx86.o) : archx86.S | $(buildoutputdir)
 	$(CROSS_CC) $(CC_FLAGS) -c $< -o $@
