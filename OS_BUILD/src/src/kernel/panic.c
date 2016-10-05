@@ -32,13 +32,12 @@ We are sorry for the inconvenience this might have caused.\n\n\
 Please report the following information and restart your computer.\n\
 The system has been halted.\n\n";
 
-  DebugClrScr (0x1f);
-  DebugGotoXY (0, 0);
-  DebugSetColor (0x1f);
-  DebugPuts (disclamer);
+  debug_clr_scr (0x1f);
+  debug_goto_xy (0, 0);
+  debug_set_color (0x1f);
+  debug_puts (disclamer);
 
-  DebugPrintf ("*** STOP: %s", fmt);
-
+  debug_printf ("*** STOP: %s", fmt);
   for (;;)
     ;
 }

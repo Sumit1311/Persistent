@@ -25,7 +25,7 @@
 #define		I86_PIT_REG_COUNTER0		0x40
 #define		I86_PIT_REG_COUNTER1		0x41
 #define		I86_PIT_REG_COUNTER2		0x42
-#define		I86_PIT_REG_COMMAND			0x43
+#define		I86_PIT_REG_COMMAND		0x43
 
 //============================================================================
 //    IMPLEMENTATION PRIVATE CLASS PROTOTYPES / EXTERNAL CLASS REFERENCES
@@ -54,28 +54,26 @@ static bool _pit_bIsInit = false;
 //============================================================================
 
 //! pit timer interrupt handler
-void _cdecl i86_pit_irq ();
+void
+i86_pit_irq ();
+
+extern void
+_i86_pit_irq_wrapper ();
 
 //============================================================================
 //    IMPLEMENTATION PRIVATE FUNCTIONS
 //============================================================================
 
 //!	pit timer interrupt handler
-void _cdecl i86_pit_irq ()
-  {
-
-    _asm add esp, 12
-    _asm pushad
-
-    //! increment tick count
-    _pit_ticks++;
-
-    //! tell hal we are done
-    interruptdone(0);
-
-    _asm popad
-    _asm iretd
-  }
+void
+i86_pit_irq ()
+{
+  //! increment tick count
+  _pit_ticks++;
+  //! tell hal we are done
+  interruptdone (0);
+  return;
+}
 
 //============================================================================
 //    INTERFACE FUNCTIONS
@@ -145,7 +143,7 @@ i86_pit_start_counter (uint32_t freq, uint8_t counter, uint8_t mode)
   if (freq == 0)
     return;
 
-  uint16_t divisor = uint16_t (1193181 / (uint16_t) freq);
+  uint16_t divisor = (uint16_t) 1193181 / (uint16_t) freq;
 
   //! send operational command
   uint8_t ocw = 0;
@@ -163,18 +161,19 @@ i86_pit_start_counter (uint32_t freq, uint8_t counter, uint8_t mode)
 }
 
 //! initialize minidriver
-void _cdecl i86_pit_initialize ()
-  {
+void
+i86_pit_initialize ()
+{
 
-    //! Install our interrupt handler (irq 0 uses interrupt 32)
-    setvect (32, i86_pit_irq);
+  //! Install our interrupt handler (irq 0 uses interrupt 32)
+  setvect (32, &_i86_pit_irq_wrapper);
 
-    //! we are initialized
-    _pit_bIsInit = true;
-  }
+  //! we are initialized
+  _pit_bIsInit = true;
+}
 
 //! test if pit interface is initialized
-bool _cdecl
+bool
 i86_pit_is_initialized ()
 {
 

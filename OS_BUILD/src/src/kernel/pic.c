@@ -5,14 +5,13 @@
 //**
 //****************************************************************************
 
-#ifndef ARCH_X86
-#error "[pic.cpp for i86] requires i86 architecture. Define ARCH_X86"
-#endif
+/*#ifndef ARCH_X86
+ #error "[pic.cpp for i86] requires i86 architecture. Define ARCH_X86"
+ #endif*/
 
 //============================================================================
 //    IMPLEMENTATION HEADERS
 //============================================================================
-
 #include "hal.h"
 #include "pic.h"
 

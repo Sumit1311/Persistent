@@ -13,13 +13,12 @@ tempmountpt=$(join $(execoutputdir),tmp)
 CROSS_CC=i686-elf-gcc
 CC_FLAGS=-std=gnu99 -ffreestanding -O2 -Wall -Wextra -iquote include/kernel/ -iquote include/lib/
 OBJS=$(patsubst %.o,$(join $(buildoutputdir),%.o),$(_OBJS))
-_OBJS= debug_display.o entry.o string.o main.o archx86.o cpu.o gdt.o hal.o idt.o stdio.o
+_OBJS= debug_display.o entry.o string.o main.o archx86.o cpu.o gdt.o hal.o idt.o stdio.o pic.o pit.o exception.o panic.o
 LD_SCRIPT=$(join $(srcdir)kernel/,linker.ld)
 KERNEL_LOADER_INCLUDE=stdio.inc gdt.inc A20.inc fat12.inc common.inc oem_block.inc
-.PHONY: copyflatbinary copykernel main.dep entry.dep string.dep debug_display.dep cpu.dep gdt.dep idt.dep hal.dep stdio.dep clean all
+.PHONY: copyflatbinary copykernel main.dep entry.dep string.dep debug_display.dep cpu.dep gdt.dep idt.dep hal.dep stdio.dep clean all pic.dep pit.dep exception.dep panic.dep
 define COPY_FLAT =
-nasm -O0 -w+orphan-labels -f bin -o $@ $<
-dd status=noxfer conv=notrunc if=$< of=$(diskimage) bs=512 count=1
+
 endef
 
 define COPY_KERNEL_LOADER=
@@ -37,16 +36,16 @@ vpath %.ld src/kernel
 vpath %.asm src
 vpath %.c lib
 
-all: $(flatbinary) copykernel | $(buildoutputdir);
+all: copyflatbinary copykernel | $(buildoutputdir);
 
 $(diskimage):| $(execoutputdir)
 	mkdosfs -C $@ 1440
 	
 copyflatbinary: $(flatbinary) | $(execoutputdir) $(diskimage)
-	
+	dd status=noxfer conv=notrunc if=$< of=$(diskimage) bs=512 count=1 && sync
 	
 $(flatbinary):$(join $(srcdir),boot_loader.asm) | $(execoutputdir)
-	$(COPY_FLAT)	
+	nasm -O0 -w+orphan-labels -f bin -o $@ $< 	
 
 copykernel:$(kernelloader) $(kernelbinary) | $(execoutputdir) $(diskimage) $(tempmountpt)
 	sudo mount -t vfat -o loop $(diskimage) $(tempmountpt) && \
@@ -77,6 +76,10 @@ gdt.dep: gdt.h string.h;
 idt.dep: idt.h string.h hal.h debug_display.h;
 hal.dep: cpu.h gdt.h idt.h;
 stdio.dep: string.h stdio.h;
+pic.dep:hal.h pic.h
+pit.dep:hal.h pit.h idt.h pic.h
+exception.dep: exception.h hal.h
+panic.dep: hal.h stdarg.h debug_display.h
 	
 $(join $(buildoutputdir),archx86.o) : archx86.S | $(buildoutputdir)
 	$(CROSS_CC) $(CC_FLAGS) -c $< -o $@

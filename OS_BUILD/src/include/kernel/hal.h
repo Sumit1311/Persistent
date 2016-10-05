@@ -80,16 +80,14 @@ disable ();
 
 //! sets new interrupt vector
 extern void
-setvect (int intno, void
-( far &vect) ());
+setvect (int intno, void *vect);
 
 //! returns current interrupt vector
-extern void
-( far *
-getvect (int intno)) ( );
+extern void *
+getvect (int intno);
 
 //! returns cpu vender
-externconstchar*
+extern const char*
 get_cpu_vender ();
 
 //! returns current tick count (only for demo)

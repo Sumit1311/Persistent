@@ -18,6 +18,7 @@
 #include "idt.h"
 #include "pic.h"
 #include "pit.h"
+#include <stdbool.h>
 
 //============================================================================
 //    IMPLEMENTATION PRIVATE DEFINITIONS / ENUMERATIONS / SIMPLE TYPEDEFS
@@ -97,79 +98,61 @@ sound (unsigned frequency)
 {
 
   //! sets frequency for speaker. frequency of 0 disables speaker
-outportb (0x61, 3 | unsigned char(frequency<<2) );
+  outportb (0x61, 3 | (unsigned char) frequency << 2);
 }
 
 //! read byte from device using port mapped io
 unsigned char
 inportb (unsigned short portid)
 {
-#ifdef _MSC_VER
-_asm
-{
-  mov dx, word ptr [portid]
-  in al, dx
-  mov byte ptr [portid], al
-}
-#endif
-return (unsigned char) portid;
+  _inport_read (&portid);
+  return (unsigned char) portid;
 }
 
 //! write byte to device through port mapped io
 void
 outportb (unsigned short portid, unsigned char value)
 {
-#ifdef _MSC_VER
-_asm
-{
-  mov al, byte ptr [value]
-  mov dx, word ptr [portid]
-  out dx, al
-}
-#endif
+  _outport_write (portid, value);
 }
 
 //! enable all hardware interrupts
 void
 enable ()
 {
-#ifdef _MSC_VER
-_asm sti
-#endif
+  set ();
 }
 
 //! disable all hardware interrupts
 void
 disable ()
 {
-#ifdef _MSC_VER
-_asm cli
-#endif
+  clear ();
 }
 
 //! sets new interrupt vector
-void setvect (int intno, void ( far &vect) ( ) )
+void
+setvect (int intno, void *vect)
 {
 
 //! install interrupt handler! This overwrites prev interrupt descriptor
-i86_install_ir (intno, I86_IDT_DESC_PRESENT | I86_IDT_DESC_BIT32,
-    0x8, vect);
+  i86_install_ir (intno, I86_IDT_DESC_PRESENT | I86_IDT_DESC_BIT32, 0x8, vect);
 }
 
 //! returns current interrupt vector
-void ( far *
-getvect (int intno)) ( )
+void *
+getvect (int intno)
 {
 
-  //! get the descriptor from the idt
+//! get the descriptor from the idt
   idt_descriptor* desc = i86_get_ir (intno);
   if (!desc)
     return 0;
 
-  //! get address of interrupt handler
+//! get address of interrupt handler
   uint32_t addr = desc->baseLo | (desc->baseHi << 16);
 
-  //! return interrupt handler
+//! return interrupt handler
   I86_IRQ_HANDLER irq = (I86_IRQ_HANDLER) addr;
   return irq;
 }

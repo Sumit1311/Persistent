@@ -56,7 +56,9 @@ http://www.brokenthorn.com/Resources/OSDevIndex.html
 http://www.scs.stanford.edu/15au-cs140/pintos/pintos_13.html#SEC168
 http://www.muppetlabs.com/~breadbox/software/ELF.txt : ELF file loading and other stuff.
 http://systems.ethz.ch/sites/default/files/file/COURSES/2014%20FALL%20COURSES/2014_Fall_SPCA/lectures/x86_64_asm_cheat_sheet.pdf : x86 asm chart
-
+https://en.wikibooks.org/wiki/X86_Assembly/GAS_Syntax 
+http://x86.renejeschke.de/html/file_module_x86_id_222.html
+https://en.wikibooks.org/wiki/X86_Assembly/Other_Instructions
 
 Basic :
     Word: a 2-byte data item

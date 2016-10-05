@@ -7,15 +7,15 @@
 //**
 //****************************************************************************
 
-#ifndef ARCH_X86
-#error "[pit.h] platform not implimented. Define ARCH_X86 for HAL"
-#endif
+/*#ifndef ARCH_X86
+ #error "[pit.h] platform not implimented. Define ARCH_X86 for HAL"
+ #endif*/
 
 //============================================================================
 //    INTERFACE REQUIRED HEADERS
 //============================================================================
-
 #include "stdint.h"
+#include <stdbool.h>
 
 //============================================================================
 //    INTERFACE DEFINITIONS / ENUMERATIONS / SIMPLE TYPEDEFS

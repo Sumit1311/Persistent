@@ -1,11 +1,17 @@
 .section .text
 .globl kernel_entry
 .globl clear
-.global intialize
-.global load_local_gdt
-.global load_idt
-.global _gen_interrupt
-.global _get_cpu_info
+.globl set
+.globl intialize
+.globl load_local_gdt
+.globl load_idt
+.globl _gen_interrupt
+.globl _get_cpu_info
+.globl _inport_read
+.globl _outport_write
+.globl _save_stack_interrupt
+.globl _restore_stack_interrupt
+.globl _i86_pit_irq_wrapper
 
 intialize:
 	  cli			// clear interrupts--Do not enable them yet
@@ -21,7 +27,18 @@ intialize:
 	  call kernel_entry
 
 clear:
+	pushl %ebp
+	movl %esp,%ebp
 	cli
+	popl %ebp
+	ret
+
+set:
+	pushl %ebp
+	movl %esp,%ebp
+	sti
+	popl %ebp
+	ret
 
 load_local_gdt:
 	pushl %ebp
@@ -62,8 +79,34 @@ _get_cpu_info:
     pushl %edx
     pushl %ebx
 	movl 8(%ebp),%eax
-	popl (%eax)
-	popl (%eax+4)
-	popl (%eax+8)
+	popl %edx
+	popl %edx
+	popl %edx
 	popl %ebp
 	ret
+
+_inport_read:
+	pushl %ebp
+	movl %esp,%ebp
+	movl 8(%ebp),%ebx
+	movw (%ebx),%dx //portid
+  	in %dx,%al
+  	movb %al,(%ebx)
+  	popl %ebp
+  	ret
+
+_outport_write:
+	pushl %ebp
+	movl %esp,%ebp
+	movw 8(%ebp),%dx //portid
+	movb 10(%ebp),%al //value
+  	out %al,%dx
+  	popl %ebp
+  	ret
+
+_i86_pit_irq_wrapper:
+	pushal
+    cld /* C code following the sysV ABI requires DF to be clear on function entry */
+    call i86_pit_irq
+    popal
+    iret

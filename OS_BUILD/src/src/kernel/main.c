@@ -28,47 +28,47 @@ main ()
   hal_initialize ();
 
   //! enable all interrupts
+//  /enable ();
+
+//! install our exception handlers
+  setvect (0, &divide_by_zero_fault);
+  setvect (1, &single_step_trap);
+  setvect (2, &nmi_trap);
+  setvect (3, &breakpoint_trap);
+  setvect (4, &overflow_trap);
+  setvect (5, &bounds_check_fault);
+  setvect (6, &invalid_opcode_fault);
+  setvect (7, &no_device_fault);
+  setvect (8, &double_fault_abort);
+  setvect (10, &invalid_tss_fault);
+  setvect (11, &no_segment_fault);
+  setvect (12, &stack_fault);
+  setvect (13, &general_protection_fault);
+  setvect (14, &page_fault);
+  setvect (16, &fpu_fault);
+  setvect (17, &alignment_check_fault);
+  setvect (18, &machine_check_abort);
+  setvect (19, &simd_fpu_fault);
   enable ();
-
-  //! install our exception handlers
-  setvect (0,(void (__cdecl &)(void))divide_by_zero_fault);
-  setvect (1,(void (__cdecl &)(void))single_step_trap);
-  setvect (2,(void (__cdecl &)(void))nmi_trap);
-  setvect (3,(void (__cdecl &)(void))breakpoint_trap);
-  setvect (4,(void (__cdecl &)(void))overflow_trap);
-  setvect (5,(void (__cdecl &)(void))bounds_check_fault);
-  setvect (6,(void (__cdecl &)(void))invalid_opcode_fault);
-  setvect (7,(void (__cdecl &)(void))no_device_fault);
-  setvect (8,(void (__cdecl &)(void))double_fault_abort);
-  setvect (10,(void (__cdecl &)(void))invalid_tss_fault);
-  setvect (11,(void (__cdecl &)(void))no_segment_fault);
-  setvect (12,(void (__cdecl &)(void))stack_fault);
-  setvect (13,(void (__cdecl &)(void))general_protection_fault);
-  setvect (14,(void (__cdecl &)(void))page_fault);
-  setvect (16,(void (__cdecl &)(void))fpu_fault);
-  setvect (17,(void (__cdecl &)(void))alignment_check_fault);
-  setvect (18,(void (__cdecl &)(void))machine_check_abort);
-  setvect (19,(void (__cdecl &)(void))simd_fpu_fault);
-
   //! clear and init display
-  DebugClrScr (0x13);
-  DebugGotoXY (0, 0);
-  DebugSetColor (0x19);
+  debug_clr_scr (0x13);
+  debug_goto_xy (0, 0);
+  debug_set_color (0x19);
 
   //! render text and logo
-  DebugPuts (logo);
-  DebugSetColor (0x17);
-  DebugPuts (
+  debug_puts (logo);
+  debug_set_color (0x17);
+  debug_puts (
       "Weee.... The PIC, PIT, and exception handlers are installed!\n\n");
-  DebugPuts ("Hitting any key will fire the default HAL handlers as we do\n");
-  DebugPuts ("not have a keyboard driver yet to install one.\n\n");
-  DebugPrintf ("Cpu vender: %s \n\n", get_cpu_vender ());
+  debug_puts ("Hitting any key will fire the default HAL handlers as we do\n");
+  debug_puts ("not have a keyboard driver yet to install one.\n\n");
+  debug_printf ("Cpu vender: %s \n\n", get_cpu_vender ());
 
   // Go into a loop--constantly display the current tick count
   for (;;)
     {
-      DebugGotoXY (0, 14);
-      DebugPrintf ("Current tick count: %i", get_tick_count ());
+      debug_goto_xy (0, 14);
+      debug_printf ("Current tick count: %i", get_tick_count ());
     }
 
   return 0;

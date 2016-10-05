@@ -37,7 +37,7 @@ struct idtr
   //! size of the interrupt descriptor table (idt)
   uint16_t limit;
   //! base address of idt
-    uint32_t base;
+  uint32_t base;
 
 }__attribute__((packed));
 
@@ -66,11 +66,11 @@ static struct idtr _idtr;
 
 //! installs idtr into processors idtr register
 static void
-idt_install();
+idt_install ();
 
 //! default int handler used to catch unregistered interrupts
 static void
-i86_default_handler();
+i86_default_handler ();
 
 //============================================================================
 //    IMPLEMENTATION PRIVATE FUNCTIONS
@@ -78,9 +78,9 @@ i86_default_handler();
 
 //! installs idtr into processors idtr register
 static void
-idt_install()
+idt_install ()
 {
-  load_idt(&_idtr);
+  load_idt (&_idtr);
   /*#ifdef _MSC_VER
    _asm lidt [_idtr]
    #endif*/
@@ -88,14 +88,14 @@ idt_install()
 
 //! default handler to catch unhandled system interrupts.
 static void
-i86_default_handler()
+i86_default_handler ()
 {
 
 //#ifdef _DEBUG
-  debug_clr_scr(0x18);
-  debug_goto_xy(0, 0);
-  debug_set_color(0x1e);
-  debug_puts("*** [i86 Hal] i86_default_handler: Unhandled Exception");
+  debug_clr_scr (0x18);
+  debug_goto_xy (0, 0);
+  debug_set_color (0x1e);
+  debug_puts ("*** [i86 Hal] i86_default_handler: Unhandled Exception");
 //#endif
 
   for (;;)
@@ -108,7 +108,7 @@ i86_default_handler()
 
 //! returns interrupt descriptor
 idt_descriptor*
-i86_get_ir(uint32_t i)
+i86_get_ir (uint32_t i)
 {
 
   if (i > I86_MAX_INTERRUPTS)
@@ -119,7 +119,7 @@ i86_get_ir(uint32_t i)
 
 //! installs a new interrupt handler
 int
-i86_install_ir(uint32_t i, uint16_t flags, uint16_t sel, I86_IRQ_HANDLER irq)
+i86_install_ir (uint32_t i, uint16_t flags, uint16_t sel, I86_IRQ_HANDLER irq)
 {
 
   if (i > I86_MAX_INTERRUPTS)
@@ -143,7 +143,7 @@ i86_install_ir(uint32_t i, uint16_t flags, uint16_t sel, I86_IRQ_HANDLER irq)
 
 //! initialize idt
 int
-i86_idt_initialize(uint16_t codeSel)
+i86_idt_initialize (uint16_t codeSel)
 {
 
   //! set up idtr for processor
@@ -151,15 +151,15 @@ i86_idt_initialize(uint16_t codeSel)
   _idtr.base = (uint32_t) &_idt[0];
 
   //! null out the idt
-  memset((void*) &_idt[0], 0, sizeof(idt_descriptor) * I86_MAX_INTERRUPTS - 1);
+  memset ((void*) &_idt[0], 0, sizeof(idt_descriptor) * I86_MAX_INTERRUPTS - 1);
 
   //! register default handlers
   for (int i = 0; i < I86_MAX_INTERRUPTS; i++)
-    i86_install_ir(i, I86_IDT_DESC_PRESENT | I86_IDT_DESC_BIT32, codeSel,
-        (I86_IRQ_HANDLER) i86_default_handler);
+    i86_install_ir (i, I86_IDT_DESC_PRESENT | I86_IDT_DESC_BIT32, codeSel,
+		    (I86_IRQ_HANDLER) i86_default_handler);
 
   //! install our idt
-  idt_install();
+  idt_install ();
 
   return 0;
 }
