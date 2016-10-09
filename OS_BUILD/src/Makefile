@@ -13,9 +13,9 @@ tempmountpt=$(join $(execoutputdir),tmp)
 CROSS_CC=i686-elf-gcc
 CC_FLAGS=-std=gnu99 -ffreestanding -O2 -Wall -Wextra -iquote include/kernel/ -iquote include/lib/
 OBJS=$(patsubst %.o,$(join $(buildoutputdir),%.o),$(_OBJS))
-_OBJS= debug_display.o entry.o string.o main.o archx86.o cpu.o gdt.o hal.o idt.o stdio.o pic.o pit.o exception.o panic.o
+_OBJS= debug_display.o entry.o string.o main.o archx86.o cpu.o gdt.o hal.o idt.o stdio.o pic.o pit.o exception.o panic.o mmngr_phys.o
 LD_SCRIPT=$(join $(srcdir)kernel/,linker.ld)
-KERNEL_LOADER_INCLUDE=stdio.inc gdt.inc A20.inc fat12.inc common.inc oem_block.inc
+KERNEL_LOADER_INCLUDE=stdio.inc gdt.inc A20.inc fat12.inc common.inc oem_block.inc memory.inc bootinfo.inc
 .PHONY: copyflatbinary copykernel main.dep entry.dep string.dep debug_display.dep cpu.dep gdt.dep idt.dep hal.dep stdio.dep clean all pic.dep pit.dep exception.dep panic.dep
  
 vpath %.inc include
@@ -71,6 +71,7 @@ pic.dep:hal.h pic.h;
 pit.dep:hal.h pit.h idt.h pic.h;
 exception.dep: exception.h hal.h;
 panic.dep: hal.h stdarg.h debug_display.h;
+mmngr_phys.dep:mmngr_phys.h;
 	
 $(join $(buildoutputdir),archx86.o) : archx86.S | $(buildoutputdir)
 	$(CROSS_CC) $(CC_FLAGS) -c $< -o $@

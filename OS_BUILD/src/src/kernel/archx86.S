@@ -12,19 +12,29 @@
 .globl _save_stack_interrupt
 .globl _restore_stack_interrupt
 .globl _i86_pit_irq_wrapper
+.globl _get_kernel_size
 
 intialize:
 	  cli			// clear interrupts--Do not enable them yet
-      mov $0x10,%ax	// offset 0x10 in gdt for data selector, remember?
-      mov %ax, %ds
-      mov %ax, %es
-      mov %ax, %fs
-      mov %ax, %gs
-      mov %ax, %ss// Set up base stack
-      mov $0x90000, %esp
+	  movl 4(%esp),%ecx
+	  movl %esp,%ebx
+	  movl $0x90000, %esp
+	  pushl %ebx
+	  xor %ebx,%ebx
+      mov $0x10,%bx	// offset 0x10 in gdt for data selector, remember?
+      mov %bx, %ds
+      mov %bx, %es
+      mov %bx, %fs
+      mov %bx, %gs
+      mov %bx, %ss// Set up base stack
       mov %esp, %ebp// store current stack pointer
-      push %ebp
+      pushl %ebp
+      pushl %ecx
 	  call kernel_entry
+	  popl %ecx
+	  popl %ecx
+	  popl %esp
+	  ret
 
 clear:
 	pushl %ebp
@@ -110,3 +120,13 @@ _i86_pit_irq_wrapper:
     call i86_pit_irq
     popal
     iret
+
+_get_kernel_size:
+	pushl %ebp
+	movl %esp,%ebp
+	pushl %eax
+	movl 8(%ebp),%eax //portid
+	movl %edx,(%eax)
+	popl %eax
+	popl %ebp
+  	ret

@@ -6,8 +6,10 @@
  ====================================================
  */
 
+#include "bootinfo.h"
+
 extern void
-main();
+main(multiboot_info *boot_info);
 
 void
 clear();
@@ -17,7 +19,7 @@ extern void
 Exit();
 
 void
-kernel_entry()
+kernel_entry(multiboot_info *boot_info)
 {
 
   //init();
@@ -26,7 +28,7 @@ kernel_entry()
   //InitializeConstructors();
 
   //!	Call kernel entry point
-  main();
+  main(boot_info);
 
   //! Cleanup all dynamic dtors
   //Exit ();

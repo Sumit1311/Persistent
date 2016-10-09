@@ -43,8 +43,12 @@ char *
 strcpy(char *s1, const char *s2)
 {
   char *s1_p = s1;
-  while (*s1++ == *s2++)
-    ;
+  while (*s2 != '\0')
+    {
+      *s1 = *s2;
+      s1++;
+      s2++;
+    }
   return s1_p;
 }
 
