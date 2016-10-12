@@ -314,71 +314,34 @@ pmmngr_get_block_size()
   return PMMNGR_BLOCK_SIZE;
 }
 
-/*void
- pmmngr_paging_enable(bool b)
- {
+void
+pmmngr_paging_enable(bool b)
+{
+  _enable_paging(b);
+}
 
- #ifdef _MSC_VER
- _asm
- {
- mov eax, cr0
- cmp [b], 1
- je enable
- jmp disable
- enable:
- or eax, 0x80000000		//set bit 31
- mov cr0, eax
- jmp done
- disable:
- and eax, 0x7FFFFFFF//clear bit 31
- mov cr0, eax
- done:
- }
- #endif
- }
+bool
+pmmngr_is_paging()
+{
 
- bool
- pmmngr_is_paging()
- {
+  uint32_t res = 0;
 
- uint32_t res = 0;
+  _is_paging_enabled(&res);
+  return (res & 0x80000000) ? false : true;
+}
 
- #ifdef _MSC_VER
- _asm
- {
- mov eax, cr0
- mov [res], eax
- }
- #endif
+void
+pmmngr_load_PDBR(physical_addr addr)
+{
 
- return (res & 0x80000000) ? false : true;
- }
+  _load_pdbr(&addr);
+}
 
- void
- pmmngr_load_PDBR(physical_addr addr)
- {
-
- #ifdef _MSC_VER
- _asm
- {
- mov eax, [addr]
- mov cr3, eax		// PDBR is cr3 register in i86
- }
- #endif
- }
-
- physical_addr
- pmmngr_get_PDBR()
- {
-
- #ifdef _MSC_VER
- _asm
- {
- mov eax, cr3
- ret
- }
- #endif
- }*/
+physical_addr
+pmmngr_get_PDBR()
+{
+  return _get_pdbr();
+}
 
 //============================================================================
 //    INTERFACE CLASS BODIES

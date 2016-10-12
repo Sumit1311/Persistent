@@ -10,6 +10,7 @@
 #include "debug_display.h"
 #include "hal.h"
 #include "mmngr_phys.h"
+#include "mmngr_virtual.h"
 
 struct memory_region
 {
@@ -93,7 +94,7 @@ main(multiboot_info* boot_info)
 
   //! initialize the physical memory manager
   //! we place the memory bit map used by the PMM at the end of the kernel in memory
-  pmmngr_init(memSize, 0x100000 + kernelSize * 512);
+  pmmngr_init(memSize, 0xC0000000 + kernelSize * 512);
 
   debug_printf(
       "pmm initialized with %i KB physical memory; memLo: %i memHi: %i\n\n",
@@ -151,6 +152,10 @@ main(multiboot_info* boot_info)
 
   pmmngr_free_block(p);
   pmmngr_free_blocks(p2, 2);
+
+  //! initialize our vmm
+  vmmngr_initialize();
+
   while (1)
     ;
   return 0;

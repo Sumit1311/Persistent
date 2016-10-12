@@ -127,6 +127,8 @@ EnterStage3:
 
 bits 32
 
+%include "./include/paging.inc"
+
 BadImage db "*** FATAL: Invalid or corrupt kernel image. Halting system.", 0
 
 ; Copies asegment from ELF file to the given protected mode address.
@@ -156,6 +158,7 @@ Stage3:
 	mov	esp, 90000h		; stack begins from 90000h
 
 	call	ClrScr32
+	call	EnablePaging
 
 CopyImage:
 	mov 	eax, dword [IMAGE_RMODE_BASE+52+4]

@@ -13,6 +13,11 @@
 .globl _restore_stack_interrupt
 .globl _i86_pit_irq_wrapper
 .globl _get_kernel_size
+.globl _invalidate_tlb
+.globl _enable_paging
+.globl _is_paging_enabled
+.globl _load_pdbr
+.globl _get_pdbr
 
 intialize:
 	  cli			// clear interrupts--Do not enable them yet
@@ -130,3 +135,69 @@ _get_kernel_size:
 	popl %eax
 	popl %ebp
   	ret
+
+_invalidate_tlb:
+	cli
+	pushl %ebp
+	movl %esp,%ebp
+	pushl %ebx
+    movl 8(%ebp),%ebx
+    invlpg (%ebx)
+    popl %ebx
+    popl %ebp
+    sti
+    ret
+
+_enable_paging:
+	pushl %ebp
+	movl %esp,%ebp
+	pushl %ebx
+	pushl %eax
+    movl 8(%ebp),%ebx
+    movl %cr0,%eax
+   	cmpl  $0x1,%ebx
+    je enable
+    jmp disable
+    enable:
+	      or $0x80000000,%eax		//set bit 31
+	      movl %eax,%cr0
+	      jmp done
+    disable:
+      	and $0x7FFFFFFF,%eax//clear bit 31
+      	movl %eax,%cr0
+    done:
+    	popl %eax
+    	popl %ebx
+    	popl %ebp
+    	ret
+
+_is_paging_enabled:
+	pushl %ebp
+	movl %esp,%ebp
+	pushl %eax
+	pushl %ebx
+	movl 8(%ebp),%eax
+	movl %cr0,%ebx
+    movl %ebx,(%eax)
+    popl %ebx
+    popl %eax
+    popl %ebp
+    ret
+
+_load_pdbr:
+	pushl %ebp
+	movl %esp,%ebp
+	pushl %ebx
+	movl 8(%ebp),%ebx
+	movl (%ebx),%eax
+    movl %eax,%cr3
+    popl %ebx
+	popl %ebp
+    ret
+
+_get_pdbr:
+	pushl %ebp
+	movl %esp,%ebp
+	movl %cr3,%eax
+	popl %ebp
+	ret
