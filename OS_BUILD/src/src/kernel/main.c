@@ -40,8 +40,8 @@ char* logo =
  / /  / / /_/ /___/ / -------------------------------\n\
 /_/  /_/\\____//____/  \n\n";
 
-int
-main(multiboot_info* boot_info)
+void
+init(multiboot_info* boot_info)
 {
   //! get kernel size passed from boot loader
   uint32_t kernelSize = 0;
@@ -89,74 +89,213 @@ main(multiboot_info* boot_info)
   setvect(18, &machine_check_abort);
   setvect(19, &simd_fpu_fault);
   enable();
-  //! get memory size in KB
-  uint32_t memSize = 1024 + boot_info->m_memoryLo + boot_info->m_memoryHi * 64;
+  pmmngr_init(bootinfo->m_memorySize, 0xC0000000 + kernelSize * 512);
 
-  //! initialize the physical memory manager
-  //! we place the memory bit map used by the PMM at the end of the kernel in memory
-  pmmngr_init(memSize, 0xC0000000 + kernelSize * 512);
-
-  debug_printf(
-      "pmm initialized with %i KB physical memory; memLo: %i memHi: %i\n\n",
-      memSize, boot_info->m_memoryLo, boot_info->m_memoryHi);
-
-  debug_set_color(0x19);
-  debug_printf("Physical Memory Map :\n");
   memory_region* region = (memory_region*) 0x1000;
 
-  for (int i = 0; i < 15; ++i)
+  for (int i = 0; i < 10; ++i)
     {
 
-      //! sanity check; if type is > 4 mark it reserved
       if (region[i].type > 4)
-        region[i].type = 1;
+        break;
 
-      //! if start address is 0, there is no more entries, break out
       if (i > 0 && region[i].startLo == 0)
         break;
 
-      //! display entry
-      debug_printf(
-          "region %i: start: 0x%x%x length (bytes): 0x%x%x type: %i (%s)\n", i,
-          region[i].startHi, region[i].startLo, region[i].sizeHi,
-          region[i].sizeLo, region[i].type, strMemoryTypes[region[i].type - 1]);
-
-      //! if region is avilable memory, initialize the region for use
-      if (region[i].type == 1)
-        pmmngr_init_region(region[i].startLo, region[i].sizeLo);
+      pmmngr_init_region(region[i].startLo, region[i].sizeLo);
     }
-
-  //! deinit the region the kernel is in as its in use
   pmmngr_deinit_region(0x100000, kernelSize * 512);
-
-  debug_set_color(0x17);
-
-  debug_printf(
-      "\npmm regions initialized: %i allocation blocks; used or reserved blocks: %i\nfree blocks: %i\n",
-      pmmngr_get_block_count(), pmmngr_get_use_block_count(),
-      pmmngr_get_free_block_count());
-
-  //! allocating and deallocating memory examples...
-
-  debug_set_color(0x12);
-
-  uint32_t* p = (uint32_t*) pmmngr_alloc_block();
-  debug_printf("\np allocated at 0x%x", p);
-
-  uint32_t* p2 = (uint32_t*) pmmngr_alloc_blocks(2);
-  debug_printf("\nallocated 2 blocks for p2 at 0x%x", p2);
-
-  pmmngr_free_block(p);
-  p = (uint32_t*) pmmngr_alloc_block();
-  debug_printf("\nUnallocated p to free block 1. p is reallocated to 0x%x", p);
-
-  pmmngr_free_block(p);
-  pmmngr_free_blocks(p2, 2);
 
   //! initialize our vmm
   vmmngr_initialize();
+  kkybrd_install(33);
+}
+
+void
+sleep(int ms)
+{
+
+  static int ticks = ms + get_tick_count();
+  while (ticks > get_tick_count())
+    ;
+}
+
+//! wait for key stroke
+KEYCODE
+getch()
+{
+
+  KEYCODE key = KEY_UNKNOWN;
+
+  //! wait for a keypress
+  while (key == KEY_UNKNOWN)
+    key = kkybrd_get_last_key();
+
+  //! discard last keypress (we handled it) and return
+  kkybrd_discard_last_key();
+  return key;
+}
+
+//! command prompt
+void
+cmd()
+{
+
+  debug_printf("\nCommand> ");
+}
+
+//! gets next command
+void
+get_cmd(char* buf, int n)
+{
+
+  cmd();
+
+  KEYCODE key = KEY_UNKNOWN;
+  bool BufChar;
+
+  //! get command string
+  int i = 0;
+  while (i < n)
+    {
+
+      //! buffer the next char
+      BufChar = true;
+
+      //! grab next char
+      key = getch();
+
+      //! end of command if enter is pressed
+      if (key == KEY_RETURN)
+        break;
+
+      //! backspace
+      if (key == KEY_BACKSPACE)
+        {
+
+          //! dont buffer this char
+          BufChar = false;
+
+          if (i > 0)
+            {
+
+              //! go back one char
+              unsigned y, x;
+              debug_get_xy(&x, &y);
+              if (x > 0)
+                debug_goto_xy(--x, y);
+              else
+                {
+                  //! x is already 0, so go back one line
+                  y--;
+                  x = DebugGetHorz();
+                }
+
+              //! erase the character from display
+              debug_putc(' ');
+              debug_goto_xy(x, y);
+
+              //! go back one char in cmd buf
+              i--;
+            }
+        }
+
+      //! only add the char if it is to be buffered
+      if (BufChar)
+        {
+
+          //! convert key to an ascii char and put it in buffer
+          char c = kkybrd_key_to_ascii(key);
+          if (c != 0)
+            { //insure its an ascii char
+
+              debug_putc(c);
+              buf[i++] = c;
+            }
+        }
+
+      //! wait for next key. You may need to adjust this to suite your needs
+      sleep(10);
+    }
+
+  //! null terminate the string
+  buf[i] = '\0';
+}
+
+//! our simple command parser
+bool
+run_cmd(char* cmd_buf)
+{
+
+  //! exit command
+  if (strcmp(cmd_buf, "exit") == 0)
+    {
+      return true;
+    }
+
+  //! clear screen
+  else if (strcmp(cmd_buf, "cls") == 0)
+    {
+      DebugClrScr(0x17);
+    }
+
+  //! help
+  else if (strcmp(cmd_buf, "help") == 0)
+    {
+
+      debug_puts("\nOS Development Series Keyboard Programming Demo");
+      debug_puts("\nwith a basic Command Line Interface (CLI)\n\n");
+      debug_puts("Supported commands:\n");
+      debug_puts(" - exit: quits and halts the system\n");
+      debug_puts(" - cls: clears the display\n");
+      debug_puts(" - help: displays this message\n");
+    }
+
+  //! invalid command
+  else
+    {
+      debug_printf("\nUnkown command");
+    }
+
+  return false;
+}
+
+void
+run()
+{
+
+  //! command buffer
+  char cmd_buf[100];
 
   while (1)
+    {
+
+      //! get command
+      get_cmd(cmd_buf, 98);
+
+      //! run command
+      if (run_cmd(cmd_buf) == true)
+        break;
+    }
+}
+
+int
+main(multiboot_info* bootinfo)
+{
+
+  //    _asm    mov     word ptr [kernelSize], dx
+
+  init(bootinfo);
+
+  debug_goto_xy(0, 0);
+  debug_puts("OSDev Series Keyboard Demo");
+  debug_puts("\nType \"exit\" to quit, \"help\" for a list of commands\n");
+  debug_puts("+-------------------------------------------------------+\n");
+
+  run();
+
+  debug_printf("\nExit command recieved; demo halted");
+  for (;;)
     ;
   return 0;
 }
