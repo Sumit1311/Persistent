@@ -11,6 +11,10 @@
 #include "hal.h"
 #include "mmngr_phys.h"
 #include "mmngr_virtual.h"
+#include "kybrd.h"
+#include "string.h"
+#include "stdio.h"
+#include "flpydsk.h"
 
 struct memory_region
 {
@@ -89,7 +93,7 @@ init(multiboot_info* boot_info)
   setvect(18, &machine_check_abort);
   setvect(19, &simd_fpu_fault);
   enable();
-  pmmngr_init(bootinfo->m_memorySize, 0xC0000000 + kernelSize * 512);
+  pmmngr_init(boot_info->m_memorySize, 0xC0000000 + kernelSize * 512);
 
   memory_region* region = (memory_region*) 0x1000;
 
@@ -109,13 +113,20 @@ init(multiboot_info* boot_info)
   //! initialize our vmm
   vmmngr_initialize();
   kkybrd_install(33);
+
+  //! set drive 0 as current drive
+  flpydsk_set_working_drive(0);
+
+  //! install floppy disk to IR 38, uses IRQ 6
+  flpydsk_install(38);
 }
 
 void
 sleep(int ms)
 {
 
-  static int ticks = ms + get_tick_count();
+  static int ticks = 0;
+  ticks = ms + get_tick_count();
   while (ticks > get_tick_count())
     ;
 }
@@ -188,7 +199,7 @@ get_cmd(char* buf, int n)
                 {
                   //! x is already 0, so go back one line
                   y--;
-                  x = DebugGetHorz();
+                  x = debug_get_horz();
                 }
 
               //! erase the character from display
@@ -222,6 +233,46 @@ get_cmd(char* buf, int n)
   buf[i] = '\0';
 }
 
+//! read sector command
+void
+cmd_read_sect()
+{
+
+  uint32_t sectornum = 0;
+  char sectornumbuf[4];
+  uint8_t* sector = 0;
+
+  debug_printf("\n\rPlease type in the sector number [0 is default] >");
+  get_cmd(sectornumbuf, 3);
+  sectornum = atoi(sectornumbuf);
+  sectornum = 1;
+  debug_printf("\n\rSector %i contents:\n\n\r", sectornum);
+
+  //! read sector from disk
+  sector = flpydsk_read_sector(sectornum);
+
+  //! display sector
+  if (sector != 0)
+    {
+
+      int i = 0;
+      for (int c = 0; c < 4; c++)
+        {
+
+          for (int j = 0; j < 128; j++)
+            debug_printf("0x%x ", sector[i + j]);
+          i += 128;
+
+          debug_printf("\n\rPress any key to continue\n\r");
+          getch();
+        }
+    }
+  else
+    debug_printf("\n\r*** Error reading sector from disk");
+
+  debug_printf("\n\rDone.");
+}
+
 //! our simple command parser
 bool
 run_cmd(char* cmd_buf)
@@ -236,7 +287,7 @@ run_cmd(char* cmd_buf)
   //! clear screen
   else if (strcmp(cmd_buf, "cls") == 0)
     {
-      DebugClrScr(0x17);
+      debug_clr_scr(0x17);
     }
 
   //! help
@@ -249,6 +300,11 @@ run_cmd(char* cmd_buf)
       debug_puts(" - exit: quits and halts the system\n");
       debug_puts(" - cls: clears the display\n");
       debug_puts(" - help: displays this message\n");
+      debug_puts(" - read: reads a specific sector and displays it in hex\n");
+    }
+  else if (strcmp(cmd_buf, "read") == 0)
+    {
+      cmd_read_sect();
     }
 
   //! invalid command
@@ -280,12 +336,12 @@ run()
 }
 
 int
-main(multiboot_info* bootinfo)
+main(multiboot_info* boot_info)
 {
 
   //    _asm    mov     word ptr [kernelSize], dx
 
-  init(bootinfo);
+  init(boot_info);
 
   debug_goto_xy(0, 0);
   debug_puts("OSDev Series Keyboard Demo");

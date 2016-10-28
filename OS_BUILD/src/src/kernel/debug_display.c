@@ -11,6 +11,7 @@
 #include "stdarg.h"
 #include "string.h"
 #include "debug_display.h"
+#include "hal.h"
 
 //============================================================================
 //    IMPLEMENTATION PRIVATE DEFINITIONS / ENUMERATIONS / SIMPLE TYPEDEFS
@@ -28,17 +29,15 @@
 //    IMPLEMENTATION PRIVATE DATA
 //============================================================================
 
-// Note: Some systems may require 0xB0000 Instead of 0xB8000
-// We dont care for portability here, so pick either one
-#define VID_MEMORY	0xB8000
+//! video memory
+uint16_t *video_memory = (uint16_t *) 0xB8000;
 
-// these vectors together act as a corner of a bounding rect
-// This allows GotoXY() to reposition all the text that follows it
-static unsigned int _xPos = 0, _yPos = 0;
-static unsigned _startX = 0, _startY = 0;
+//! current position
+uint8_t cursor_x = 0;
+uint8_t cursor_y = 0;
 
-// current color
-static unsigned _color = 0;
+//! current color
+uint8_t _color = 0;
 
 //============================================================================
 //    INTERFACE DATA
@@ -50,31 +49,95 @@ static unsigned _color = 0;
 //    IMPLEMENTATION PRIVATE FUNCTIONS
 //============================================================================
 
+//! Updates hardware cursor
+void
+debug_update_cur(int x, int y)
+{
+
+  // get location
+  uint16_t cursorLocation = y * 80 + x;
+
+  // send location to vga controller to set cursor
+  // disable();
+  //outportb(0x3D4, 14);
+  //outportb(0x3D5, cursorLocation >> 8); // Send the high byte.
+  //outportb(0x3D4, 15);
+  //outportb(0x3D5, cursorLocation); // Send the low byte.
+  //enable();
+
+}
+
+void
+scroll()
+{
+
+  if (cursor_y >= 25)
+    {
+
+      uint16_t attribute = _color << 8;
+
+      //! move current display up one line
+      for (int i = 0 * 80; i < 24 * 80; i++)
+        video_memory[i] = video_memory[i + 80];
+
+      //! clear the bottom line
+      for (int i = 24 * 80; i < 25 * 80; i++)
+        video_memory[i] = attribute | ' ';
+
+      cursor_y = 24;
+    }
+}
+
 void
 debug_putc(unsigned char c)
 {
 
-  if (c == 0)
-    return;
+  uint16_t attribute = _color << 8;
 
-  if (c == '\n' || c == '\r')
-    { /* start new line */
-      _yPos += 2;
-      _xPos = _startX;
-      return;
+  //! backspace character
+  if (c == 0x08 && cursor_x)
+    cursor_x--;
+
+  //! tab character
+  else if (c == 0x09)
+    cursor_x = (cursor_x + 8) & ~(8 - 1);
+
+  //! carriage return
+  else if (c == '\r')
+    cursor_x = 0;
+
+  //! new line
+  else if (c == '\n')
+    {
+      cursor_x = 0;
+      cursor_y++;
     }
 
-  if (_xPos > 79)
-    { /* start new line */
-      _yPos += 2;
-      _xPos = _startX;
-      return;
+  //! printable characters
+  else if (c >= ' ')
+    {
+
+      //! display character on screen
+      uint16_t* location = video_memory + (cursor_y * 80 + cursor_x);
+      *location = c | attribute;
+      cursor_x++;
     }
 
-  /* draw the character */
-  unsigned char* p = (unsigned char*) VID_MEMORY + (_xPos++) * 2 + _yPos * 80;
-  *p++ = c;
-  *p = _color;
+  //! if we are at edge of row, go to new line
+  if (cursor_x >= 80)
+    {
+
+      cursor_x = 0;
+      cursor_y++;
+    }
+
+  //! if we are at the last line, scroll up
+  if (cursor_y >= 25)
+    scroll();
+
+  //! update hardware cursor
+  debug_update_cur(cursor_x, cursor_y);
+
 }
 
 char tbuf[32];
@@ -140,30 +203,26 @@ void
 debug_goto_xy(unsigned x, unsigned y)
 {
 
-  // reposition starting vectors for next text to follow
-  // multiply by 2 do to the video modes 2byte per character layout
-  _xPos = x * 2;
-  _yPos = y * 2;
-  _startX = _xPos;
-  _startY = _yPos;
+  if (cursor_x <= 80)
+    cursor_x = x;
+
+  if (cursor_y <= 25)
+    cursor_y = y;
+
+  //! update hardware cursor to new position
+  debug_update_cur(cursor_x, cursor_y);
 }
 
 void
 debug_clr_scr(const unsigned short c)
 {
 
-  unsigned char* p = (unsigned char*) VID_MEMORY;
+  //! clear video memory by writing space characters to it
+  for (int i = 0; i < 80 * 25; i++)
+    video_memory[i] = ' ' | (c << 8);
 
-  for (int i = 0; i < 160 * 30; i += 2)
-    {
-
-      p[i] = ' '; /* Need to watch out for MSVC++ optomization memset() call */
-      p[i + 1] = c;
-    }
-
-  // go to start of previous set vector
-  _xPos = _startX;
-  _yPos = _startY;
+//! move position back to start
+  debug_goto_xy(0, 0);
 }
 
 void
@@ -261,6 +320,33 @@ debug_printf(const char* str, ...)
 
   va_end (args);
   return 1;
+}
+
+//! returns position
+void
+debug_get_xy(unsigned* x, unsigned* y)
+{
+  if (x == 0 || y == 0)
+    return;
+
+  *x = cursor_x;
+  *y = cursor_y;
+}
+
+//! returns horzontal width
+int
+debug_get_horz()
+{
+
+  return 80;
+}
+
+//! returns vertical height
+int
+debug_get_vert()
+{
+
+  return 24;
 }
 
 //============================================================================

@@ -1,15 +1,18 @@
-#ifndef _DEBUGDISPLAY_H
-#define _DEBUGDISPLAY_H
+#ifndef _FLPYDSK_DRIVER_H
+#define _FLPYDSK_DRIVER_H
 //****************************************************************************
 //**
-//**    DebugDisplay.h
-//**    - Allows displaying debugging information for testing without
-//**	worry of compatability nor hardware abstraction.
+//**    flpydsk.h
 //**
 //****************************************************************************
+
 //============================================================================
 //    INTERFACE REQUIRED HEADERS
 //============================================================================
+
+#include "stdint.h"
+#include <stdbool.h>
+
 //============================================================================
 //    INTERFACE DEFINITIONS / ENUMERATIONS / SIMPLE TYPEDEFS
 //============================================================================
@@ -26,24 +29,26 @@
 //    INTERFACE FUNCTION PROTOTYPES
 //============================================================================
 
-extern void
-debug_clr_scr(const unsigned short c);
-extern void
-debug_puts(char* str);
-extern int
-debug_printf(const char* str, ...);
-extern unsigned
-debug_set_color(const unsigned c);
-extern void
-debug_goto_xy(unsigned x, unsigned y);
-extern void
-debug_get_xy(unsigned* x, unsigned* y);
-extern int
-debug_get_horz();
-extern int
-debug_get_vert();
+//! install floppy driver
 void
-debug_putc(unsigned char c);
+flpydsk_install(int irq);
+
+//! set current working drive
+void
+flpydsk_set_working_drive(uint8_t drive);
+
+//! get current working drive
+uint8_t
+flpydsk_get_working_drive();
+
+//! read a sector
+uint8_t*
+flpydsk_read_sector(int sectorLBA);
+
+//! converts an LBA address to CHS
+void
+flpydsk_lba_to_chs(int lba, int *head, int *track, int *sector);
+
 //============================================================================
 //    INTERFACE OBJECT CLASS DEFINITIONS
 //============================================================================
@@ -52,7 +57,8 @@ debug_putc(unsigned char c);
 //============================================================================
 //****************************************************************************
 //**
-//**    END DebugDisplay.h
+//**    END [flpydsk.h]
 //**
 //****************************************************************************
+
 #endif

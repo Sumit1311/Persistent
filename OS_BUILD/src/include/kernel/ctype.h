@@ -24,7 +24,7 @@ extern "C"
 {
 #endif
 
-extern char _ctype[];
+  char _ctype[];
 
 /* Constants */
 

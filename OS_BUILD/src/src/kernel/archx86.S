@@ -13,6 +13,7 @@
 .globl _restore_stack_interrupt
 .globl _i86_pit_irq_wrapper
 .globl _i86_keyboard_irq_wrapper
+.globl _i86_flpy_irq_wrapper
 .globl _get_kernel_size
 .globl _invalidate_tlb
 .globl _enable_paging
@@ -131,6 +132,13 @@ _i86_keyboard_irq_wrapper:
 	pushal
     cld /* C code following the sysV ABI requires DF to be clear on function entry */
     call i86_kybrd_irq
+    popal
+    iret
+
+_i86_flpy_irq_wrapper:
+	pushal
+    cld /* C code following the sysV ABI requires DF to be clear on function entry */
+    call i86_flpy_irq
     popal
     iret
 

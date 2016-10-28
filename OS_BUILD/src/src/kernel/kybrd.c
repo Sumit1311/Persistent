@@ -19,6 +19,9 @@
 
 // keyboard encoder ------------------------------------------
 
+extern void
+_i86_keyboard_irq_wrapper();
+
 enum KYBRD_ENCODER_IO
 {
   KYBRD_ENC_INPUT_BUF = 0x60, KYBRD_ENC_CMD_REG = 0x60
@@ -415,7 +418,7 @@ i86_kybrd_irq()
     }
 
   //! tell hal we are done
-  interruptdone(0);
+  interruptdone(1);
 }
 
 //============================================================================
@@ -715,7 +718,7 @@ kkybrd_install(int irq)
 {
 
   //! Install our interrupt handler (irq 1 uses interrupt 33)
-  setvect(irq, i86_kybrd_irq);
+  setvect(irq, &_i86_keyboard_irq_wrapper);
 
   //! assume BAT test is good. If there is a problem, the IRQ handler where catch the error
   _kkybrd_bat_res = true;
