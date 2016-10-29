@@ -58,13 +58,14 @@ debug_update_cur(int x, int y)
   uint16_t cursorLocation = y * 80 + x;
 
   // send location to vga controller to set cursor
-  // disable();
-  //outportb(0x3D4, 14);
-  //outportb(0x3D5, cursorLocation >> 8); // Send the high byte.
-  //outportb(0x3D4, 15);
-  //outportb(0x3D5, cursorLocation); // Send the low byte.
-  //enable();
-
+//#if 0
+  disable();
+  outportb(0x3D4, 14);
+  outportb(0x3D5, cursorLocation >> 8); // Send the high byte.
+  outportb(0x3D4, 15);
+  outportb(0x3D5, cursorLocation); // Send the low byte.
+  enable();
+//#endif
 }
 
 void
