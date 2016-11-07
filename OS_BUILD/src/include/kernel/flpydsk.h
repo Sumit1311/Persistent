@@ -32,6 +32,9 @@
 bool
 flpydsk_initialize_dma(uint8_t* buffer, unsigned length);
 
+void
+flpydsk_set_dma(int addr);
+
 //! install floppy driver
 void
 flpydsk_install(int irq);
