@@ -164,6 +164,9 @@ const int FLPY_SECTORS_PER_TRACK = 18;
 //! You can change this as needed. It must be below 16MB and in idenitity mapped memory!
 const int DMA_BUFFER = 0x1000;
 
+//! FDC uses DMA channel 2
+const int FDC_DMA_CHANNEL = 2;
+
 //============================================================================
 //    IMPLEMENTATION PRIVATE CLASS PROTOTYPES / EXTERNAL CLASS REFERENCES
 //============================================================================
@@ -212,19 +215,58 @@ static volatile uint8_t _FloppyDiskIRQ = 0;
  */
 
 //! initialize DMA to use phys addr 84k-128k
-void
-flpydsk_initialize_dma()
+bool
+flpydsk_initialize_dma(uint8_t* buffer, unsigned length)
 {
 
-  outportb(0x0a, 0x06);	//mask dma channel 2
-  outportb(0xd8, 0xff);	//reset master flip-flop
-  outportb(0x04, 0);     //address=0x1000
-  outportb(0x04, 0x10);
-  outportb(0xd8, 0xff);  //reset master flip-flop
-  outportb(0x05, 0xff); //count to 0x23ff (number of bytes in a 3.5" floppy disk track)
-  outportb(0x05, 0x23);
-  outportb(0x80, 0);     //external page register = 0
-  outportb(0x0a, 0x02);  //unmask dma channel 2
+  /*outportb(0x0a, 0x06);	//mask dma channel 2
+   outportb(0xd8, 0xff);	//reset master flip-flop
+   outportb(0x04, 0);     //address=0x1000
+   outportb(0x04, 0x10);
+   outportb(0xd8, 0xff);  //reset master flip-flop
+   outportb(0x05, 0xff); //count to 0x23ff (number of bytes in a 3.5" floppy disk track)
+   outportb(0x05, 0x23);
+   outportb(0x80, 0);     //external page register = 0
+   outportb(0x0a, 0x02);  //unmask dma channel 2*/
+
+  union
+  {
+    uint8_t byte[4];		//Lo[0], Mid[1], Hi[2]
+    unsigned long l;
+  } a, c;
+
+  a.l = (unsigned) buffer;
+  c.l = (unsigned) length - 1;
+
+  //Check for buffer issues
+  if ((a.l >> 24) || (c.l >> 16) || (((a.l & 0xffff) + c.l) >> 16))
+    {
+      /*
+       #ifdef _DEBUG
+       _asm
+       {
+       mov eax, 0x1337
+       cli
+       hlt
+       }
+       #endif
+       */
+      return false;
+    }
+
+  dma_reset(1);
+  dma_mask_channel(FDC_DMA_CHANNEL);		//Mask channel 2
+  dma_reset_flipflop(1);		//Flipflop reset on DMA 1
+
+  dma_set_address(FDC_DMA_CHANNEL, a.byte[0], a.byte[1]);		//Buffer address
+  dma_reset_flipflop(1);		//Flipflop reset on DMA 1
+
+  dma_set_count(FDC_DMA_CHANNEL, c.byte[0], c.byte[1]);		//Set count
+  dma_set_read(FDC_DMA_CHANNEL);
+
+  dma_unmask_all(1);		//Unmask channel 2
+
+  return true;
 }
 
 //! prepare the DMA for read transfer
@@ -485,7 +527,13 @@ flpydsk_read_sector_imp(uint8_t head, uint8_t track, uint8_t sector)
   uint32_t st0, cyl;
 
   //! set the DMA for read transfer
-  flpydsk_dma_read();
+  //flpydsk_dma_read();
+
+  //! initialize DMA
+  flpydsk_initialize_dma((uint8_t*) DMA_BUFFER, 512);
+
+  //! set the DMA for read transfer
+  dma_set_read(FDC_DMA_CHANNEL);
 
   //! read in a sector
   flpydsk_send_command(
@@ -566,7 +614,7 @@ flpydsk_install(int irq)
   setvect(irq, &_i86_flpy_irq_wrapper);
 
   //! initialize the DMA for FDC
-  flpydsk_initialize_dma();
+  //flpydsk_initialize_dma();
 
   //! reset the fdc
   flpydsk_reset();

@@ -29,6 +29,9 @@
 //    INTERFACE FUNCTION PROTOTYPES
 //============================================================================
 
+bool
+flpydsk_initialize_dma(uint8_t* buffer, unsigned length);
+
 //! install floppy driver
 void
 flpydsk_install(int irq);

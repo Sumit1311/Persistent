@@ -67,3 +67,7 @@ Basic :
     Paragraph: a 16-byte (128 bit) area
     Kilobyte: 1024 bytes
     Megabyte: 1,048,576 bytes
+    
+Analysis :
+	0x00001000 or c0000b83
+	

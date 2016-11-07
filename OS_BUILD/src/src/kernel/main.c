@@ -245,7 +245,7 @@ cmd_read_sect()
   debug_printf("\n\rPlease type in the sector number [0 is default] >");
   get_cmd(sectornumbuf, 3);
   sectornum = atoi(sectornumbuf);
-  sectornum = 1;
+  //sectornum = 1;
   debug_printf("\n\rSector %i contents:\n\n\r", sectornum);
 
   //! read sector from disk
