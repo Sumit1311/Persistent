@@ -1,13 +1,14 @@
 //****************************************************************************
 //**
-//**    [string.cpp]
-//**    - [Standard C string routine implimentation]
+//**    fsys.cpp
+//**		-Virtual File System
 //**
 //****************************************************************************
 //============================================================================
 //    IMPLEMENTATION HEADERS
 //============================================================================
 
+#include "fsys.h"
 #include "string.h"
 
 //============================================================================
@@ -25,6 +26,12 @@
 //============================================================================
 //    IMPLEMENTATION PRIVATE DATA
 //============================================================================
+
+#define DEVICE_MAX 26
+
+//! File system list
+PFILESYSTEM _FileSystems[DEVICE_MAX];
+
 //============================================================================
 //    INTERFACE DATA
 //============================================================================
@@ -38,84 +45,102 @@
 //    INTERFACE FUNCTIONS
 //============================================================================
 
-//! compare two strings
-int strcmp(const char* str1, const char* str2) {
+/**
+ *	Opens a file
+ */
+FILE volOpenFile(const char* fname) {
 
-	int res = 0;
-	while (!(res = *(unsigned char*) str1 - *(unsigned char*) str2) && *str2)
-		++str1, ++str2;
+	if (fname) {
 
-	if (res < 0)
-		res = -1;
-	if (res > 0)
-		res = 1;
+		//! default to device 'a'
+		unsigned char device = 'a';
 
-	return res;
-}
+		//! filename
+		char* filename = (char*) fname;
 
-//! copies string s2 to s1
-char *
-strcpy(char *s1, const char *s2) {
-	char *s1_p = s1;
-	while (*s2 != '\0') {
-		*s1 = *s2;
-		s1++;
-		s2++;
+		//! in all cases, if fname[1]==':' then the first character must be device letter
+		//! FIXME: Using fname[2] do to BUG 2. Please see main.cpp for info
+		if (fname[2] == ':') {
+
+			device = fname[0];
+			filename += 3; //strip it from pathname
+		}
+
+		//! call filesystem
+		if (_FileSystems[device - 'a']) {
+
+			//! set volume specific information and return file
+			FILE file = _FileSystems[device - 'a']->Open(filename);
+			file.deviceID = device;
+			return file;
+		}
 	}
-	return s1_p;
+
+	//! return invalid file
+	FILE file;
+	file.flags = FS_INVALID;
+	return file;
 }
 
-size_t strlen(const char* str) {
+/**
+ *	Reads file
+ */
+void volReadFile(PFILE file, unsigned char* Buffer, unsigned int Length) {
 
-	size_t len = 0;
-	while (str[len++])
-		; /* careful! MSVC++ optomization might embed call to strlen()*/
-	return len;
+	if (file)
+		if (_FileSystems[file->deviceID - 'a'])
+			_FileSystems[file->deviceID - 'a']->Read(file, Buffer, Length);
 }
 
-//! copies count bytes from src to dest
-void *
-memcpy(void *dest, const void *src, size_t count) {
-	const char *sp = (const char *) src;
-	char *dp = (char *) dest;
-	for (; count != 0; count--)
-		*dp++ = *sp++;
-	return dest;
+/**
+ *	Close file
+ */
+void volCloseFile(PFILE file) {
+
+	if (file)
+		if (_FileSystems[file->deviceID - 'a'])
+			_FileSystems[file->deviceID - 'a']->Close(file);
 }
 
-//! sets count bytes of dest to val
-void *
-memset(void *dest, char val, size_t count) {
-	unsigned char *temp = (unsigned char *) dest;
-	for (; count != 0; count--, temp[count] = val)
-		;
-	return dest;
+/**
+ *	Registers a filesystem
+ */
+void volRegisterFileSystem(PFILESYSTEM fsys, unsigned int deviceID) {
+
+	static int i = 0;
+
+	if (i < DEVICE_MAX)
+		if (fsys) {
+
+			_FileSystems[deviceID] = fsys;
+			i++;
+		}
 }
 
-//! sets count bytes of dest to val
-unsigned short *
-memsetw(unsigned short *dest, unsigned short val, size_t count) {
-	unsigned short *temp = (unsigned short *) dest;
-	for (; count != 0; count--)
-		*temp++ = val;
-	return dest;
+/**
+ *	Unregister file system
+ */
+void volUnregisterFileSystem(PFILESYSTEM fsys) {
+
+	for (int i = 0; i < DEVICE_MAX; i++)
+		if (_FileSystems[i] == fsys)
+			_FileSystems[i] = 0;
 }
 
-//! locates first occurance of character in string
-char* strchr(char * str, int character) {
+/**
+ *	Unregister file system
+ */
+void volUnregisterFileSystemByID(unsigned int deviceID) {
 
-	do {
-		if (*str == character)
-			return (char*) str;
-	} while (*str++);
-
-	return 0;
+	if (deviceID < DEVICE_MAX)
+		_FileSystems[deviceID] = 0;
 }
+
 //============================================================================
 //    INTERFACE CLASS BODIES
 //============================================================================
 //****************************************************************************
 //**
-//**    END[String.cpp]
+//**    END[fsys.cpp]
 //**
 //****************************************************************************

@@ -1,15 +1,17 @@
-#ifndef _DEBUGDISPLAY_H
-#define _DEBUGDISPLAY_H
+#ifndef _FSYS_H
+#define _FSYS_H
 //****************************************************************************
 //**
-//**    DebugDisplay.h
-//**    - Allows displaying debugging information for testing without
-//**	worry of compatability nor hardware abstraction.
+//**    flpydsk.h
 //**
 //****************************************************************************
+
 //============================================================================
 //    INTERFACE REQUIRED HEADERS
 //============================================================================
+
+#include "stdint.h"
+
 //============================================================================
 //    INTERFACE DEFINITIONS / ENUMERATIONS / SIMPLE TYPEDEFS
 //============================================================================
@@ -19,6 +21,51 @@
 //============================================================================
 //    INTERFACE STRUCTURES / UTILITY CLASSES
 //============================================================================
+
+/**
+ *	File
+ */
+typedef struct _FILE
+{
+
+  char name[32];
+  uint32_t flags;
+  uint32_t fileLength;
+  uint32_t id;
+  uint32_t eof;
+  uint32_t position;
+  uint32_t currentCluster;
+  uint32_t deviceID;
+
+} FILE, *PFILE;
+
+/**
+ *	Filesystem interface
+ */
+typedef struct _FILE_SYSTEM
+{
+
+  char Name[8];
+  FILE
+  (*Directory) (const char* DirectoryName);
+  void
+  (*Mount) ();
+  void
+  (*Read) (PFILE file, unsigned char* Buffer, unsigned int Length);
+  void
+  (*Close) (PFILE);
+  FILE
+  (*Open) (const char* FileName);
+
+} FILESYSTEM, *PFILESYSTEM;
+
+/**
+ *	File flags
+ */
+#define FS_FILE       0
+#define FS_DIRECTORY  1
+#define FS_INVALID    2
+
 //============================================================================
 //    INTERFACE DATA DECLARATIONS
 //============================================================================
@@ -26,24 +73,19 @@
 //    INTERFACE FUNCTION PROTOTYPES
 //============================================================================
 
+extern FILE
+volOpenFile (const char* fname);
 extern void
-debug_clr_scr (const unsigned short c);
+volReadFile (PFILE file, unsigned char* Buffer, unsigned int Length);
 extern void
-debug_puts (char* str);
-extern int
-debug_printf (const char* str, ...);
-extern unsigned
-debug_set_color (const unsigned c);
+volCloseFile (PFILE file);
 extern void
-debug_goto_xy (unsigned x, unsigned y);
+volRegisterFileSystem (PFILESYSTEM, unsigned int deviceID);
 extern void
-debug_get_xy (unsigned* x, unsigned* y);
-extern int
-debug_get_horz ();
-extern int
-debug_get_vert ();
-void
-debug_putc (unsigned char c);
+volUnregisterFileSystem (PFILESYSTEM);
+extern void
+volUnregisterFileSystemByID (unsigned int deviceID);
+
 //============================================================================
 //    INTERFACE OBJECT CLASS DEFINITIONS
 //============================================================================
@@ -52,7 +94,8 @@ debug_putc (unsigned char c);
 //============================================================================
 //****************************************************************************
 //**
-//**    END DebugDisplay.h
+//**    END [fsys.h]
 //**
 //****************************************************************************
+
 #endif
