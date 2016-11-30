@@ -1,0 +1,8 @@
+Comparative Study :
+
+Write program for locks,semaphores,condition variables,monitors,synchronization using IPC send/receive.
+
+Based On Above :
+
+Using every primitive defined above.
+Write programs for reader-writer, producer-consumer, dining philosopher.
