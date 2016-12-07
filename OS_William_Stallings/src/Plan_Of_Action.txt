@@ -6,3 +6,17 @@ Based On Above :
 
 Using every primitive defined above.
 Write programs for reader-writer, producer-consumer, dining philosopher.
+
+
+Learnings :
+
+Locks, Semaphore are basically built on top of basic instructions but there is logical difference between them.
+
+Locks are owned(Ownership) by only one process at a time but that restriction doesnot apply to binary semaphore(No ownership).
+Locks can be invoked multiple times by same owner as it's owned by him.
+Locks are not initialized.  
+
+
+mutexes : used for mutual exclusion (i.e. used for restricted access to the the resource, acquire and release necesarily done by same thread)
+
+binary semaphore : can be used for above purpose as well as can be used for scheduling purposes
