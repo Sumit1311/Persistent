@@ -8,6 +8,10 @@
 #include "cond_variable.h"
 #include <pthread.h>
 #include <stdio.h>
+#include <stdlib.h>
+#define COUNT_DONE  10
+#define COUNT_HALT1  3
+#define COUNT_HALT2  6
 
 void *
 increment_first (void *);
@@ -28,9 +32,9 @@ run_cond_var_example ()
   int tid1 = 1, tid2 = 2;
 
   /* Create independent threads each of which will execute function */
-
-  pthread_create (&thread1, NULL, &increment_first, &tid1);
   pthread_create (&thread2, NULL, &increment_second, &tid2);
+  pthread_create (&thread1, NULL, &increment_first, &tid1);
+
   //Used to initialize but if already initialized undefined behaviour
   //pthread_mutex_init (&mutex1, NULL);
   /* Wait till threads are complete before main continues. Unless we  */
@@ -51,20 +55,19 @@ increment_first (void *id)
   while (1)
     {
       pthread_mutex_lock (&mutex);
-      while (count > 0)
+      while (count >= COUNT_HALT1 && count <= COUNT_HALT2)
 	{
-	  printf ("Going to sleep :");
 	  pthread_cond_wait (&condition, &mutex);
 	}
       pthread_mutex_unlock (&mutex);
+
       pthread_mutex_lock (&count_mutex);
       count++;
-      printf ("Thread %d : Count After Increment : %d");
+      printf ("Counter value functionCount1: %d\n", count);
       pthread_mutex_unlock (&count_mutex);
-      if (count >= 10)
-	{
-	  break;
-	}
+
+      if (count >= COUNT_DONE)
+	return (NULL);
     }
 }
 
@@ -74,18 +77,18 @@ increment_second (void *id)
   while (1)
     {
       pthread_mutex_lock (&mutex);
-      if (count > 5 || count < 2)
+      if (count < COUNT_HALT1 || count > COUNT_HALT2)
 	{
 	  pthread_cond_signal (&condition);
 	}
       pthread_mutex_unlock (&mutex);
+
       pthread_mutex_lock (&count_mutex);
       count++;
-      printf ("Thread %d : Count After Increment : %d");
+      printf ("Counter value functionCount2: %d\n", count);
       pthread_mutex_unlock (&count_mutex);
-      if (count >= 10)
-	{
-	  break;
-	}
+
+      if (count >= COUNT_DONE)
+	return (NULL);
     }
 }
