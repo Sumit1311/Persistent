@@ -9,8 +9,6 @@
 #ifndef SEMAPHORE_H__
 #define SEMAPHORE_H__
 
-sem_t counting_sem_s;
-
 void
 run_sem_example();
 

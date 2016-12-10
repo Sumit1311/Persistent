@@ -8,6 +8,9 @@
 #include <pthread.h>
 #include <stdio.h>
 #include "semaphore.h"
+#include <unistd.h>
+
+sem_t counting_sem_s;
 
 void
 run_sem_example()
@@ -19,6 +22,9 @@ run_sem_example()
   for (int i = 0; i < 10; i++)
     {
       pthread_create(&thread[i], NULL, &thread_task, &tid[i]);
+    }
+  for (int i = 0; i < 10; i++)
+    {
       pthread_join(thread[i], NULL);
     }
 }
@@ -26,16 +32,12 @@ run_sem_example()
 void *
 thread_task(void *tid)
 {
-  printf("Thread %d : Requesting Resource", *(int*) tid);
+  printf("Thread %d : Requesting Resource \n", *(int*) tid);
   request_resource();
-  printf("Thread %d : Resource Allocated", *(int*) tid);
-  for (int i = 0; i < 1000000; i++)
-    {
-      //do something with resource
-    };
-
+  printf("Thread %d : Resource Allocated \n", *(int*) tid);
+  sleep(10);
   release_resource();
-  printf("Thread %d : Resource Freed", *(int*) tid);
+  printf("Thread %d : Resource Freed\n", *(int*) tid);
 }
 
 void
@@ -48,7 +50,7 @@ void
 allocate_resource()
 {
   sem_wait(&counting_sem_s);
-  printf("Allocating Resource");
+  printf("Allocating Resource\n");
 }
 
 void
@@ -61,5 +63,5 @@ void
 free_resource()
 {
   sem_post(&counting_sem_s);
-  printf("Freeing Resource");
+  printf("Freeing Resource\n");
 }
