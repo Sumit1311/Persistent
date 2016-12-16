@@ -18,7 +18,7 @@
 char input_card[NUMBER_OF_LINES][INPUT_COLUMN_SIZE];
 char output_card[NUMBER_OF_LINES][OUTPUT_COLUMN_SIZE], rs, sp;
 int in_line_number = 0, in_col_umber = -1, out_col_umber = -1, out_line_number =
-    0, stop_flag = 0;
+    0, squash_stop_flag = 0, print_stop_flag = 0;
 
 sem_t read_s, print_s, squash_s;
 pthread_mutex_t lock_m = PTHREAD_MUTEX_INITIALIZER;
@@ -84,25 +84,32 @@ run_example_4_2 ()
 void *
 read (void *)
 {
-  while (in_line_number < NUMBER_OF_LINES)
+
+  int flag = squash_stop_flag;
+  while (!flag)
     {
       sem_wait (&read_s);
       read_next_char ();
       printf ("Read the character : %c\n", rs);
+      if (in_line_number == NUMBER_OF_LINES)
+	{
+	  squash_stop_flag = 1;
+	  flag = 1;
+	}
       sem_post (&squash_s);
     }
-  sem_wait (&read_s);
-  pthread_mutex_lock (&lock_m);
-  stop_flag = 1;
-  pthread_mutex_unlock (&lock_m);
-  sem_post (&squash_s);
+  /*  sem_wait (&read_s);
+   pthread_mutex_lock (&lock_m);
+   squash_stop_flag = 1;
+   pthread_mutex_unlock (&lock_m);
+   sem_post (&squash_s);*/
   printf ("Exiting Read\n");
 }
 
 void *
 squash (void *)
 {
-  int flag = stop_flag;
+  int flag = squash_stop_flag;
   while (!flag)
     {
       sem_wait (&squash_s);
@@ -126,13 +133,18 @@ squash (void *)
 	      sem_post (&print_s);
 	      sem_wait (&squash_s);
 	      sp = rs;
+	      flag = squash_stop_flag;
+	      if (flag)
+		{
+		  print_stop_flag = 1;
+		}
 	      sem_post (&print_s);
 	    }
 	}
       sem_wait (&squash_s);
-      pthread_mutex_lock (&lock_m);
-      flag = stop_flag;
-      pthread_mutex_unlock (&lock_m);
+      /*   pthread_mutex_lock (&lock_m);
+       flag = squash_stop_flag;
+       pthread_mutex_unlock (&lock_m);*/
       sem_post (&read_s);
     }
   printf ("Exiting Squash\n");
@@ -141,18 +153,14 @@ squash (void *)
 void*
 print (void*)
 {
-  int flag = stop_flag;
-  while (out_line_number < NUMBER_OF_LINES)
+  int flag = squash_stop_flag;
+  while (out_line_number < NUMBER_OF_LINES && !flag)
     {
       sem_wait (&print_s);
       printf ("Print the character : %c\n", sp);
       write_next_char ();
+      flag = print_stop_flag;
       sem_post (&squash_s);
-      pthread_mutex_lock (&lock_m);
-      flag = stop_flag;
-      pthread_mutex_unlock (&lock_m);
-      if (flag)
-	break;
     }
   printf ("Exiting Print\n");
 }
