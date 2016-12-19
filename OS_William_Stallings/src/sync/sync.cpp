@@ -14,10 +14,11 @@
 //#include "reader_writer_rdr_pri.h"
 //#include "reader_writer_wr_pri.h"
 //#include "example-4.18.h"
-#include "example-4.2.h"
+//#include "example-4.2.h"
+#include "example-4.23.h"
 
 void
-run_sync_example ()
+run_sync_example()
 {
   //run_lock_example ();
   //run_cond_var_example();
@@ -26,5 +27,6 @@ run_sync_example ()
   //run_rw_example();
   //run_rw_wr_pri_example ();
   //run_example_18 ();
-  run_example_4_2 ();
+  //run_example_4_2();
+  run_example_4_23();
 }

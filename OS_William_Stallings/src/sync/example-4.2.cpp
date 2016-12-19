@@ -9,6 +9,7 @@
 #include <semaphore.h>
 #include <stdio.h>
 #include <ctype.h>
+
 #include "example-4.2.h"
 
 #define INPUT_COLUMN_SIZE 10
