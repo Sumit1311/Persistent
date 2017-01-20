@@ -1,0 +1,48 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.6	//
+O_SRCS	Debug/sources.mk	/^O_SRCS := $/;"	m
+CPP_SRCS	Debug/sources.mk	/^CPP_SRCS := $/;"	m
+C_UPPER_SRCS	Debug/sources.mk	/^C_UPPER_SRCS := $/;"	m
+C_SRCS	Debug/sources.mk	/^C_SRCS := $/;"	m
+S_UPPER_SRCS	Debug/sources.mk	/^S_UPPER_SRCS := $/;"	m
+OBJ_SRCS	Debug/sources.mk	/^OBJ_SRCS := $/;"	m
+ASM_SRCS	Debug/sources.mk	/^ASM_SRCS := $/;"	m
+CXX_SRCS	Debug/sources.mk	/^CXX_SRCS := $/;"	m
+CC_SRCS	Debug/sources.mk	/^CC_SRCS := $/;"	m
+OBJS	Debug/sources.mk	/^OBJS := $/;"	m
+C_DEPS	Debug/sources.mk	/^C_DEPS := $/;"	m
+CC_DEPS	Debug/sources.mk	/^CC_DEPS := $/;"	m
+CPP_DEPS	Debug/sources.mk	/^CPP_DEPS := $/;"	m
+EXECUTABLES	Debug/sources.mk	/^EXECUTABLES := $/;"	m
+CXX_DEPS	Debug/sources.mk	/^CXX_DEPS := $/;"	m
+C_UPPER_DEPS	Debug/sources.mk	/^C_UPPER_DEPS := $/;"	m
+SUBDIRS	Debug/sources.mk	/^SUBDIRS := \\$/;"	m
+USER_OBJS	Debug/objects.mk	/^USER_OBJS :=$/;"	m
+LIBS	Debug/objects.mk	/^LIBS :=$/;"	m
+RM	Debug/makefile	/^RM := rm -rf$/;"	m
+main	src/Assignments.cpp	/^main()$/;"	f
+VECTOR_H_	src/vector/vector.h	4;"	d
+Vector	src/vector/vector.h	/^  class Vector$/;"	c
+arr	src/vector/vector.h	/^    T *arr;$/;"	m	class:Vector
+size	src/vector/vector.h	/^    int size, capacity;$/;"	m	class:Vector
+capacity	src/vector/vector.h	/^    int size, capacity;$/;"	m	class:Vector
+RUN_VECTOR_H_	src/vector/run_vector.h	9;"	d
+print_vector	src/vector/run_vector.cpp	/^  print_vector(Vector<T> v)$/;"	f
+run_vector	src/vector/run_vector.cpp	/^run_vector()$/;"	f
+DEQUE_H_	src/deque/deque.h	9;"	d
+ARRAY_SIZE	src/deque/deque.h	10;"	d
+Deque_Node	src/deque/deque.h	/^class Deque_Node$/;"	c
+start	src/deque/deque.h	/^  int start,end;$/;"	m	class:Deque_Node
+end	src/deque/deque.h	/^  int start,end;$/;"	m	class:Deque_Node
+Deque	src/deque/deque.h	/^class Deque$/;"	c
+node_list	src/deque/deque.h	/^  std::vector<Deque_Node *> node_list;$/;"	m	class:Deque
+RUN_DEQUE_H_	src/deque/run_deque.h	9;"	d
+Deque	src/deque_w/deque_w.cpp	/^Deque::Deque() :$/;"	f	class:Deque
+Deque	src/deque_w/deque_w.cpp	/^Deque::Deque(int s) :$/;"	f	class:Deque
+Deque	src/deque_w/deque_w.cpp	/^Deque::Deque(const Deque &d) :$/;"	f	class:Deque
+at	src/deque_w/deque_w.cpp	/^Deque::at(int index)$/;"	f	class:Deque
+push_front	src/deque_w/deque_w.cpp	/^Deque::push_front(int &e)$/;"	f	class:Deque

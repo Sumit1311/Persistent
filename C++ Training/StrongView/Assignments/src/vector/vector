@@ -1,0 +1,12 @@
+/*
+ * vector
+ *
+ *  Created on: Jan 13, 2017
+ *      Author: sumit
+ */
+
+#ifndef VECTOR_
+#define VECTOR_
+#include "vector.h"
+#include "vector.tcc"
+#endif /* VECTOR_ */
