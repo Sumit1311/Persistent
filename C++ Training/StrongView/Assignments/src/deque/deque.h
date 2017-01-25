@@ -12,11 +12,11 @@
 
 class Deque_Node
 {
-  int start,end;
-  std::vector<int> arr(ARRAY_SIZE);
+  int front, rear;
+  //std::vector<int> arr(ARRAY_SIZE);
 public:
-  Deque_Node(int,int);
-  void 
+  Deque_Node(int, int);
+  void
   push_front(int&);
   int
   pop_front();

@@ -39,7 +39,7 @@ run_vector()
   std::cout << "Current Size : " << v.get_size() << std::endl;
   print_vector(v);
   //pop back
-  std::cout << "The popped element is : " << v.pop_back() << std::endl;
+  v.pop_back();
   print_vector(v);
   std::cout << "Current Capacity : " << v.get_capacity() << std::endl;
   std::cout << "Current Size : " << v.get_size() << std::endl;

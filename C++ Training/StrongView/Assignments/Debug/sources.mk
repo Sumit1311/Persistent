@@ -24,5 +24,8 @@ C_UPPER_DEPS :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 src/vector \
+src/deque_w \
+src/deque \
 src \
+.metadata/.plugins/org.eclipse.cdt.make.core \
 

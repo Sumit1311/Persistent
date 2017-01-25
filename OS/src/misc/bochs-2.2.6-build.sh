@@ -1,4 +1,8 @@
 #! /bin/sh -e
+#SRCDIR=/home/sumit/Build_Workspace/build_bochs
+#PINTOSDIR=/home/sumit/Workspace/Persistent/OS
+#DSTDIR=/home/sumit/Installations/bochs
+#env SRCDIR=/home/sumit/Build_Workspace/build_bochs PINTOSDIR=/home/sumit/Workspace/Persistent/OS  DSTDIR=/home/sumit/Installations/bochs
 
 if test -z "$SRCDIR" || test -z "$PINTOSDIR" || test -z "$DSTDIR"; then
     echo "usage: env SRCDIR=<srcdir> PINTOSDIR=<srcdir> DSTDIR=<dstdir> sh $0"

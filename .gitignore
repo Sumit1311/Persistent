@@ -6,3 +6,6 @@
 *~
 **/RemoteSystemsTempFiles/**
 .metadata
+**/*.out
+**/*.o
+**/.settings

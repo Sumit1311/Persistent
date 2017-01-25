@@ -9,6 +9,6 @@
 #define DEQUE_
 
 #include "deque.h"
-#include "deque.tcc"
+#include "deque.cpp"
 
 #endif /* DEQUE_ */

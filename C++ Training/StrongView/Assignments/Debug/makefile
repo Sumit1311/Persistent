@@ -10,7 +10,10 @@ RM := rm -rf
 -include sources.mk
 -include subdir.mk
 -include src/vector/subdir.mk
+-include src/deque_w/subdir.mk
+-include src/deque/subdir.mk
 -include src/subdir.mk
+-include .metadata/.plugins/org.eclipse.cdt.make.core/subdir.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)

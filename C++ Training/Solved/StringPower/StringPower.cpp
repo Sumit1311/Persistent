@@ -149,7 +149,7 @@ int StringPower::CountWord_String(string word_sentence)
 		}
 		
 		
-		Index=word_sentence.find_first_of(" ",Index+1);y
+		Index=word_sentence.find_first_of(" ",Index+1);
 
 		count++;		
 		

@@ -2,91 +2,125 @@
 #define VECTOR_TCC_
 #include <stdexcept>
 #include <iostream>
+#include <memory>
+#include <algorithm>
+#include "vector.h"
 
 template<class T>
-Vector<T>::Vector()
+vector_base<T>::vector_base(int c,int s)
   {
-
-    capacity = 5;
+    capacity = c;
     arr = new T[capacity];
-    size = 0;
+    size = s;
+  }
+
+template <class T>
+vector_base<T>::~vector_base()
+  {
+    delete[] arr;
   }
 
 template<class T>
-Vector<T>::Vector(const int s)
+void
+vector_base<T>::swap(vector_base<T>& v2)
   {
-    if (s <= 5)
+    std::swap(this->size,v2.size);
+    std::swap(this->capacity,v2.capacity);
+    std::swap(this->arr,v2.arr);
+  }
+
+template<class T>
+Vector<T>::Vector() : vector_base<T>(5,0)
+  {
+  }
+
+template<class T>
+Vector<T>::Vector(const int s) : vector_base<T>(5,s)
+  {
+  }
+
+template<class T>
+Vector<T>::Vector(const Vector &v) : vector_base<T>(v.capacity,v.size)
+  {
+    for (int i = 0; i < v.size; i++)
       {
-        capacity = 5;
+        //calls assignment operator
+        this->arr[i] = v[i];
       }
-    else
-      {
-        capacity = s;
-      }
-    arr = new T[capacity];
-    size = s;
   }
 
 template<class T>
 T&
 Vector<T>::operator[](int index) const
   {
-    //return this->arr[index];
-    return at(index);
+    return this->arr[index];
   }
 
 template<class T>
 T&
 Vector<T>::at(const int index) const
   {
-    if (index >= 0 && index < size)
+    if (index >= 0 && index < this->size)
       {
-        //std::cout<<"Accessing Element"<<index<<std::endl;
-        return arr[index];
+        return this->arr[index];
       }
     else
       {
-        //std::cout<<"Index Out of Bound";
         throw std::out_of_range("Index out of bound");
       }
   }
 
 template<class T>
 void
-Vector<T>::push_back(const T &ele)
+Vector<T>::destroy_elements()
   {
-    if (size == capacity)
+    for(int i=0;i<this->size;i++)
       {
-        int ncap = capacity + 5;
-        T *temp = new T[ncap];
-        for (int i = 0; i < size; i++)
-          {
-            temp[i] = arr[i];
-          }
-        temp[size] = ele;
-        delete[] arr;
-        arr = temp;
-        size++;
-        capacity = ncap;
-      }
-    else
-      {
-        arr[size] = ele;
-        size++;
+        this->arr[i].~T();
       }
   }
 
 template<class T>
-T
+Vector<T>::~Vector()
+  {
+    destroy_elements();
+  }
+
+template<class T>
+void
+Vector<T>::push_back(const T &ele)
+  {
+    if (this->size == this->capacity)
+      {
+        int ncap = this->capacity + 5;
+        vector_base<T> temp_v(ncap,this->size);
+        for (int i = 0; i < this->size; i++)
+          {
+            temp_v.arr[i] = this->arr[i];
+          }
+        temp_v.arr[temp_v.size] = ele;
+        temp_v.size++;
+        destroy_elements();
+        temp_v.swap(*this);
+      }
+    else
+      {
+        this->arr[this->size] = ele;
+        this->size++;
+      }
+  }
+
+template<class T>
+void
 Vector<T>::pop_back()
   {
-    if (size == 0)
+    if (this->size == 0)
       {
         return;
       }
-    T temp = arr[size - 1];
-    size--;
-    return temp;
+    this->arr[this->size - 1].~T();
+    this->size--;
+    return;
   }
 
 /*template <class T>
@@ -104,47 +138,27 @@ template<class T>
 int
 Vector<T>::get_capacity()
   {
-    return capacity;
+    return this->capacity;
   }
 
 template<class T>
 int
 Vector<T>::get_size()
   {
-    return size;
-  }
-
-template<class T>
-Vector<T>::~Vector()
-  {
-    delete[] arr;
-  }
-
-template<class T>
-Vector<T>::Vector(const Vector &v)
-  {
-    arr = new T[v.capacity];
-    for (int i = 0; i < v.size; i++)
-      {
-        arr[i] = v[i];
-      }
-    size = v.size;
-    capacity = v.capacity;
+    return this->size;
   }
 
 template<class T>
 Vector<T>
 Vector<T>::operator=(const Vector<T>& v)
   {
-    T *temp = new T[v.capacity];
+    vector_base<T> temp_v(v.capacity,v.size);
     for (int i = 0; i < v.size; i++)
       {
-        temp[i] = v[i];
+        temp_v.arr[i] = v.arr[i];
       }
-    delete[] arr;
-    arr = temp;
-    size = v.size;
-    capacity = v.capacity;
+    destroy_elements();
+    temp_v.swap(*this);
     return *this;
   }
 
@@ -182,5 +196,4 @@ Vector<T>::operator=(const Vector<T>& v)
  size=size+num;
  }*/
 
-Vector::
 #endif
