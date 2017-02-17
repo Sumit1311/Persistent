@@ -19,17 +19,18 @@
 
 /* Number of timer ticks since OS booted. */
 static int64_t ticks;
-
 /* Number of loops per timer tick.
    Initialized by timer_calibrate(). */
 static unsigned loops_per_tick;
 
+static struct list sleep_list;
 static intr_handler_func timer_interrupt;
 static bool too_many_loops (unsigned loops);
 static void busy_wait (int64_t loops);
 static void real_time_sleep (int64_t num, int32_t denom);
 static void real_time_delay (int64_t num, int32_t denom);
 
+list_less_func sleep_compare;
 /* Sets up the timer to interrupt TIMER_FREQ times per second,
    and registers the corresponding interrupt. */
 void
@@ -37,6 +38,8 @@ timer_init (void)
 {
   pit_configure_channel (0, 2, TIMER_FREQ);
   intr_register_ext (0x20, timer_interrupt, "8254 Timer");
+  list_init (&sleep_list);
+
 }
 
 /* Calibrates loops_per_tick, used to implement brief delays. */
@@ -84,16 +87,42 @@ timer_elapsed (int64_t then)
   return timer_ticks () - then;
 }
 
+bool sleep_compare(const struct list_elem *a, const struct list_elem *b,void *aux)
+{
+    ASSERT(a != NULL);
+    if(b == NULL)
+    {
+        return true;
+    }
+    //ASSERT(b != NULL);
+    struct thread *thread_a=list_entry(a,struct thread,elem);
+    struct thread *thread_b=list_entry(b,struct thread,elem);
+    if(thread_a->wake_up < thread_b->wake_up)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 /* Sleeps for approximately TICKS timer ticks.  Interrupts must
    be turned on. */
 void
 timer_sleep (int64_t ticks) 
 {
   int64_t start = timer_ticks ();
-
+  enum intr_level currlvl;
+  start+=ticks;
   ASSERT (intr_get_level () == INTR_ON);
-  while (timer_elapsed (start) < ticks) 
-    thread_yield ();
+  currlvl=intr_disable();
+  thread_current()->wake_up=start;
+  list_insert_ordered(&sleep_list,&thread_current()->elem,&sleep_compare,NULL);
+  thread_block(); 
+  intr_set_level(currlvl);
+  /*while (timer_elapsed (start) < ticks) 
+    thread_yield ();*/
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
@@ -172,6 +201,18 @@ timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   thread_tick ();
+
+  while(!list_empty(&sleep_list))
+    {
+        struct thread *t=list_entry(list_begin(&sleep_list),struct thread,elem);
+        if(t->wake_up > ticks)
+        {
+            break;
+        }
+        t->wake_up=0;
+        list_pop_front(&sleep_list);
+        thread_unblock(t);
+    }
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
