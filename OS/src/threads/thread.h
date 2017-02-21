@@ -98,6 +98,7 @@ struct thread
     uint32_t *pagedir;                  /* Page directory. */
 #endif
     int64_t wake_up;
+    int donated_priority;
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
   };
@@ -137,6 +138,12 @@ int thread_get_nice (void);
 void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
+
+
+list_less_func priority_compare;
+bool compare_thread_priority(struct thread *a, struct thread*b);
+
+
 
 
 

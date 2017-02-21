@@ -28,7 +28,6 @@ static struct list ready_list;
 /* List of all processes.  Processes are added to this list
    when they are first scheduled and removed when they exit. */
 static struct list all_list;
-
 /*list of all sleeping processes*/
 
 
@@ -248,7 +247,11 @@ thread_unblock (struct thread *t)
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
-  list_push_back (&ready_list, &t->elem);
+  list_insert_ordered (&ready_list, &t->elem,&priority_compare,NULL);
+  if(compare_thread_priority(t,thread_current()))
+  {
+    thread_yield();
+  } 
   t->status = THREAD_READY;
   intr_set_level (old_level);
 }
@@ -319,7 +322,7 @@ thread_yield (void)
 
   old_level = intr_disable ();
   if (cur != idle_thread) 
-    list_push_back (&ready_list, &cur->elem);
+    list_insert_ordered (&ready_list, &cur->elem, &priority_compare, NULL);
   cur->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
@@ -346,14 +349,24 @@ thread_foreach (thread_action_func *func, void *aux)
 void
 thread_set_priority (int new_priority) 
 {
-  thread_current ()->priority = new_priority;
+    //potential race condition is when schedule is called in between
+    //can't use lock because there will be deadlock with the scheduler
+    //so using interrupt enable and disable
+    enum intr_level old_level=intr_disable();
+    int old_priority=thread_current()->priority;
+    thread_current()->priority=new_priority;
+    if(old_priority > new_priority)
+    {
+        thread_yield();   
+    }
+    intr_set_level(old_level);
 }
 
 /* Returns the current thread's priority. */
 int
 thread_get_priority (void) 
 {
-  return thread_current ()->priority;
+  return thread_current()->priority > thread_current()->donated_priority ? thread_current()->priority :thread_current()->donated_priority ;
 }
 
 /* Sets the current thread's nice value to NICE. */
@@ -591,3 +604,31 @@ allocate_tid (void)
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
+
+
+bool compare_thread_priority(struct thread *a, struct thread*b)
+{
+    
+    int prio_a=a->priority < a->donated_priority ? a->donated_priority : a->priority;
+    
+    int prio_b=b->priority < b->donated_priority ? b->donated_priority : b->priority;
+    if(prio_a > prio_b)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool priority_compare(const struct list_elem *a, const struct list_elem *b,void *aux)
+{
+    
+    ASSERT(a != NULL);
+    ASSERT(b != NULL);
+    struct thread *thread_a=list_entry(a,struct thread,elem);
+    struct thread *thread_b=list_entry(b,struct thread,elem);
+    return compare_thread_priority(thread_a,thread_b);
+
+}
