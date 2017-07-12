@@ -5,10 +5,10 @@
  *      Author: sumit
  */
 
-#ifndef DEQUE_
-#define DEQUE_
+#ifndef DEQUE_W
+#define DEQUE_W
 
-#include "deque.h"
-#include "deque.tcc"
+#include "deque_w.h"
+#include "deque_w.tcc"
 
 #endif /* DEQUE_ */

@@ -7,6 +7,7 @@
 ARRAY_SIZE	src/deque/deque.h	10;"	d
 ARRAY_SIZE	src/deque_w/deque_w.h	11;"	d
 ASM_SRCS	Debug/sources.mk	/^ASM_SRCS := $/;"	m
+Assignments.cpp	src/Assignments.cpp	1;"	F
 CC_DEPS	Debug/sources.mk	/^CC_DEPS := $/;"	m
 CC_SRCS	Debug/sources.mk	/^CC_SRCS := $/;"	m
 CPP_DEPS	Debug/sources.mk	/^CPP_DEPS := $/;"	m
@@ -19,51 +20,44 @@ C_UPPER_DEPS	Debug/sources.mk	/^C_UPPER_DEPS := $/;"	m
 C_UPPER_SRCS	Debug/sources.mk	/^C_UPPER_SRCS := $/;"	m
 DEQUE_H_	src/deque/deque.h	9;"	d
 DEQUE_W_H_	src/deque_w/deque_w.h	9;"	d
-Deque	src/deque/deque.h	/^  Deque();$/;"	p	class:Deque	access:public	signature:()
-Deque	src/deque/deque.h	/^  Deque(const Deque&);$/;"	p	class:Deque	access:public	signature:(const Deque&)
-Deque	src/deque/deque.h	/^  Deque(int);$/;"	p	class:Deque	access:public	signature:(int)
+Deque	src/deque/deque.h	/^        Deque();$/;"	p	class:Deque	access:public	signature:()
+Deque	src/deque/deque.h	/^        Deque(const Deque&);$/;"	p	class:Deque	access:public	signature:(const Deque&)
+Deque	src/deque/deque.h	/^        Deque(int,int);$/;"	p	class:Deque	access:public	signature:(int,int)
 Deque	src/deque/deque.h	/^class Deque$/;"	c
 Deque	src/deque_w/deque_w.h	/^  Deque();$/;"	p	class:Deque	access:public	signature:()
 Deque	src/deque_w/deque_w.h	/^  Deque(const Deque&);$/;"	p	class:Deque	access:public	signature:(const Deque&)
 Deque	src/deque_w/deque_w.h	/^  Deque(int);$/;"	p	class:Deque	access:public	signature:(int)
 Deque	src/deque_w/deque_w.h	/^class Deque$/;"	c
-Deque::Deque	src/deque/deque.h	/^  Deque();$/;"	p	class:Deque	access:public	signature:()
-Deque::Deque	src/deque/deque.h	/^  Deque(const Deque&);$/;"	p	class:Deque	access:public	signature:(const Deque&)
-Deque::Deque	src/deque/deque.h	/^  Deque(int);$/;"	p	class:Deque	access:public	signature:(int)
+Deque::Deque	src/deque/deque.h	/^        Deque();$/;"	p	class:Deque	access:public	signature:()
+Deque::Deque	src/deque/deque.h	/^        Deque(const Deque&);$/;"	p	class:Deque	access:public	signature:(const Deque&)
+Deque::Deque	src/deque/deque.h	/^        Deque(int,int);$/;"	p	class:Deque	access:public	signature:(int,int)
 Deque::Deque	src/deque_w/deque_w.h	/^  Deque();$/;"	p	class:Deque	access:public	signature:()
 Deque::Deque	src/deque_w/deque_w.h	/^  Deque(const Deque&);$/;"	p	class:Deque	access:public	signature:(const Deque&)
 Deque::Deque	src/deque_w/deque_w.h	/^  Deque(int);$/;"	p	class:Deque	access:public	signature:(int)
-Deque::at	src/deque/deque.h	/^  at(int);$/;"	p	class:Deque	access:public	signature:(int)
+Deque::at	src/deque/deque.h	/^        at(int);$/;"	p	class:Deque	access:public	signature:(int)
 Deque::at	src/deque_w/deque_w.h	/^  at(int);$/;"	p	class:Deque	access:public	signature:(int)
+Deque::front	src/deque/deque.h	/^        int front,rear,size;$/;"	m	class:Deque	access:private
 Deque::front	src/deque_w/deque_w.h	/^  int front[2], rear[2];$/;"	m	class:Deque	access:private
-Deque::node_list	src/deque/deque.h	/^  std::vector<Deque_Node *> node_list;$/;"	m	class:Deque	access:private
+Deque::get_size	src/deque/deque.h	/^        get_size();$/;"	p	class:Deque	access:public	signature:()
+Deque::node_list	src/deque/deque.h	/^        std::vector<std::vector<int> > node_list;$/;"	m	class:Deque	access:private
 Deque::node_list	src/deque_w/deque_w.h	/^  std::map<int, std::vector<int> > node_list;$/;"	m	class:Deque	access:private
-Deque::operator =	src/deque/deque.h	/^  operator=(Deque&);$/;"	p	class:Deque	access:public	signature:(Deque&)
+Deque::operator =	src/deque/deque.h	/^        operator=(Deque&);$/;"	p	class:Deque	access:public	signature:(Deque&)
 Deque::operator =	src/deque_w/deque_w.h	/^  operator=(Deque&);$/;"	p	class:Deque	access:public	signature:(Deque&)
-Deque::operator []	src/deque/deque.h	/^  operator[](int);$/;"	p	class:Deque	access:public	signature:(int)
+Deque::operator []	src/deque/deque.h	/^        operator[](int);$/;"	p	class:Deque	access:public	signature:(int)
 Deque::operator []	src/deque_w/deque_w.h	/^  operator[](int);$/;"	p	class:Deque	access:public	signature:(int)
-Deque::pop_back	src/deque/deque.h	/^  pop_back();$/;"	p	class:Deque	access:public	signature:()
+Deque::pop_back	src/deque/deque.h	/^        pop_back();$/;"	p	class:Deque	access:public	signature:()
 Deque::pop_back	src/deque_w/deque_w.h	/^  pop_back();$/;"	p	class:Deque	access:public	signature:()
-Deque::pop_front	src/deque/deque.h	/^  pop_front();$/;"	p	class:Deque	access:public	signature:()
+Deque::pop_front	src/deque/deque.h	/^        pop_front();$/;"	p	class:Deque	access:public	signature:()
 Deque::pop_front	src/deque_w/deque_w.h	/^  pop_front();$/;"	p	class:Deque	access:public	signature:()
-Deque::push_back	src/deque/deque.h	/^  push_back(int);$/;"	p	class:Deque	access:public	signature:(int)
+Deque::push_back	src/deque/deque.h	/^        push_back(int&);$/;"	p	class:Deque	access:public	signature:(int&)
 Deque::push_back	src/deque_w/deque_w.h	/^  push_back(int);$/;"	p	class:Deque	access:public	signature:(int)
-Deque::push_front	src/deque/deque.h	/^  push_front(int);$/;"	p	class:Deque	access:public	signature:(int)
+Deque::push_front	src/deque/deque.h	/^        push_front(int&);$/;"	p	class:Deque	access:public	signature:(int&)
 Deque::push_front	src/deque_w/deque_w.h	/^  push_front(int);$/;"	p	class:Deque	access:public	signature:(int)
+Deque::rear	src/deque/deque.h	/^        int front,rear,size;$/;"	m	class:Deque	access:private
 Deque::rear	src/deque_w/deque_w.h	/^  int front[2], rear[2];$/;"	m	class:Deque	access:private
-Deque::~Deque	src/deque/deque.h	/^  ~Deque();$/;"	p	class:Deque	access:public	signature:()
+Deque::size	src/deque/deque.h	/^        int front,rear,size;$/;"	m	class:Deque	access:private
+Deque::~Deque	src/deque/deque.h	/^        ~Deque();$/;"	p	class:Deque	access:public	signature:()
 Deque::~Deque	src/deque_w/deque_w.h	/^  ~Deque();$/;"	p	class:Deque	access:public	signature:()
-Deque_Node	src/deque/deque.h	/^  Deque_Node(int, int);$/;"	p	class:Deque_Node	access:public	signature:(int, int)
-Deque_Node	src/deque/deque.h	/^class Deque_Node$/;"	c
-Deque_Node::Deque_Node	src/deque/deque.h	/^  Deque_Node(int, int);$/;"	p	class:Deque_Node	access:public	signature:(int, int)
-Deque_Node::front	src/deque/deque.h	/^  int front, rear;$/;"	m	class:Deque_Node	access:private
-Deque_Node::is_empty	src/deque/deque.h	/^  is_empty();$/;"	p	class:Deque_Node	access:public	signature:()
-Deque_Node::is_full	src/deque/deque.h	/^  is_full();$/;"	p	class:Deque_Node	access:public	signature:()
-Deque_Node::pop_front	src/deque/deque.h	/^  pop_front();$/;"	p	class:Deque_Node	access:public	signature:()
-Deque_Node::push_back	src/deque/deque.h	/^  push_back(int&);$/;"	p	class:Deque_Node	access:public	signature:(int&)
-Deque_Node::push_front	src/deque/deque.h	/^  push_front(int&);$/;"	p	class:Deque_Node	access:public	signature:(int&)
-Deque_Node::rear	src/deque/deque.h	/^  int front, rear;$/;"	m	class:Deque_Node	access:private
-Deque_Node::~Deque_Node	src/deque/deque.h	/^  ~Deque_Node();$/;"	p	class:Deque_Node	access:public	signature:()
 EXECUTABLES	Debug/sources.mk	/^EXECUTABLES := $/;"	m
 LIBS	Debug/objects.mk	/^LIBS :=$/;"	m
 OBJS	Debug/sources.mk	/^OBJS := $/;"	m
@@ -75,7 +69,7 @@ RUN_VECTOR_H_	src/vector/run_vector.h	9;"	d
 SUBDIRS	Debug/sources.mk	/^SUBDIRS := \\$/;"	m
 S_UPPER_SRCS	Debug/sources.mk	/^S_UPPER_SRCS := $/;"	m
 USER_OBJS	Debug/objects.mk	/^USER_OBJS :=$/;"	m
-VECTOR_H_	src/vector/vector.h	4;"	d
+VECTOR_H_	src/vector/vector.h	2;"	d
 Vector	src/vector/vector.h	/^    Vector();$/;"	p	class:Vector	access:public	signature:()
 Vector	src/vector/vector.h	/^    Vector(const Vector& v);$/;"	p	class:Vector	access:public	signature:(const Vector& v)
 Vector	src/vector/vector.h	/^    Vector(const int size);$/;"	p	class:Vector	access:public	signature:(const int size)
@@ -93,46 +87,64 @@ Vector::pop_back	src/vector/vector.h	/^    pop_back();$/;"	p	class:Vector	access
 Vector::push_back	src/vector/vector.h	/^    push_back(const T& ele);$/;"	p	class:Vector	access:public	signature:(const T& ele)
 Vector::~Vector	src/vector/vector.h	/^    ~Vector();$/;"	p	class:Vector	access:public	signature:()
 arr	src/vector/vector.h	/^    T *arr;$/;"	m	class:vector_base	access:public
-at	src/deque/deque.h	/^  at(int);$/;"	p	class:Deque	access:public	signature:(int)
+at	src/deque/deque.h	/^        at(int);$/;"	p	class:Deque	access:public	signature:(int)
 at	src/deque_w/deque_w.h	/^  at(int);$/;"	p	class:Deque	access:public	signature:(int)
 at	src/vector/vector.h	/^    at(int i) const;$/;"	p	class:Vector	access:public	signature:(int i) const
 capacity	src/vector/vector.h	/^    int size, capacity;$/;"	m	class:vector_base	access:public
+deque.h	src/deque/deque.h	1;"	F
+deque_w.cpp	src/deque_w/deque_w.cpp	1;"	F
+deque_w.h	src/deque_w/deque_w.h	1;"	F
 destroy_elements	src/vector/vector.h	/^    destroy_elements();$/;"	p	class:Vector	access:public	signature:()
-front	src/deque/deque.h	/^  int front, rear;$/;"	m	class:Deque_Node	access:private
+front	src/deque/deque.h	/^        int front,rear,size;$/;"	m	class:Deque	access:private
 front	src/deque_w/deque_w.h	/^  int front[2], rear[2];$/;"	m	class:Deque	access:private
 get_capacity	src/vector/vector.h	/^    get_capacity();$/;"	p	class:Vector	access:public	signature:()
+get_size	src/deque/deque.h	/^        get_size();$/;"	p	class:Deque	access:public	signature:()
 get_size	src/vector/vector.h	/^    get_size();$/;"	p	class:Vector	access:public	signature:()
-is_empty	src/deque/deque.h	/^  is_empty();$/;"	p	class:Deque_Node	access:public	signature:()
-is_full	src/deque/deque.h	/^  is_full();$/;"	p	class:Deque_Node	access:public	signature:()
 main	src/Assignments.cpp	/^main()$/;"	f	signature:()
-node_list	src/deque/deque.h	/^  std::vector<Deque_Node *> node_list;$/;"	m	class:Deque	access:private
+makefile	Debug/makefile	1;"	F
+node_list	src/deque/deque.h	/^        std::vector<std::vector<int> > node_list;$/;"	m	class:Deque	access:private
 node_list	src/deque_w/deque_w.h	/^  std::map<int, std::vector<int> > node_list;$/;"	m	class:Deque	access:private
-operator =	src/deque/deque.h	/^  operator=(Deque&);$/;"	p	class:Deque	access:public	signature:(Deque&)
+objects.mk	Debug/objects.mk	1;"	F
+operator =	src/deque/deque.h	/^        operator=(Deque&);$/;"	p	class:Deque	access:public	signature:(Deque&)
 operator =	src/deque_w/deque_w.h	/^  operator=(Deque&);$/;"	p	class:Deque	access:public	signature:(Deque&)
 operator =	src/vector/vector.h	/^    operator=(const Vector<T>& v);$/;"	p	class:Vector	access:public	signature:(const Vector<T>& v)
-operator []	src/deque/deque.h	/^  operator[](int);$/;"	p	class:Deque	access:public	signature:(int)
+operator []	src/deque/deque.h	/^        operator[](int);$/;"	p	class:Deque	access:public	signature:(int)
 operator []	src/deque_w/deque_w.h	/^  operator[](int);$/;"	p	class:Deque	access:public	signature:(int)
 operator []	src/vector/vector.h	/^    operator[](const int i) const;$/;"	p	class:Vector	access:public	signature:(const int i) const
-pop_back	src/deque/deque.h	/^  pop_back();$/;"	p	class:Deque	access:public	signature:()
+pop_back	src/deque/deque.h	/^        pop_back();$/;"	p	class:Deque	access:public	signature:()
 pop_back	src/deque_w/deque_w.h	/^  pop_back();$/;"	p	class:Deque	access:public	signature:()
 pop_back	src/vector/vector.h	/^    pop_back();$/;"	p	class:Vector	access:public	signature:()
-pop_front	src/deque/deque.h	/^  pop_front();$/;"	p	class:Deque	access:public	signature:()
-pop_front	src/deque/deque.h	/^  pop_front();$/;"	p	class:Deque_Node	access:public	signature:()
+pop_front	src/deque/deque.h	/^        pop_front();$/;"	p	class:Deque	access:public	signature:()
 pop_front	src/deque_w/deque_w.h	/^  pop_front();$/;"	p	class:Deque	access:public	signature:()
+print_deque	src/deque/run_deque.cpp	/^  print_deque(Deque d)$/;"	f	signature:(Deque d)
 print_vector	src/vector/run_vector.cpp	/^  print_vector(Vector<T> v)$/;"	f	signature:(Vector<T> v)
-push_back	src/deque/deque.h	/^  push_back(int&);$/;"	p	class:Deque_Node	access:public	signature:(int&)
-push_back	src/deque/deque.h	/^  push_back(int);$/;"	p	class:Deque	access:public	signature:(int)
+push_back	src/deque/deque.h	/^        push_back(int&);$/;"	p	class:Deque	access:public	signature:(int&)
 push_back	src/deque_w/deque_w.h	/^  push_back(int);$/;"	p	class:Deque	access:public	signature:(int)
 push_back	src/vector/vector.h	/^    push_back(const T& ele);$/;"	p	class:Vector	access:public	signature:(const T& ele)
-push_front	src/deque/deque.h	/^  push_front(int&);$/;"	p	class:Deque_Node	access:public	signature:(int&)
-push_front	src/deque/deque.h	/^  push_front(int);$/;"	p	class:Deque	access:public	signature:(int)
+push_front	src/deque/deque.h	/^        push_front(int&);$/;"	p	class:Deque	access:public	signature:(int&)
 push_front	src/deque_w/deque_w.h	/^  push_front(int);$/;"	p	class:Deque	access:public	signature:(int)
-rear	src/deque/deque.h	/^  int front, rear;$/;"	m	class:Deque_Node	access:private
+rear	src/deque/deque.h	/^        int front,rear,size;$/;"	m	class:Deque	access:private
 rear	src/deque_w/deque_w.h	/^  int front[2], rear[2];$/;"	m	class:Deque	access:private
+run_deque	src/deque/run_deque.h	/^int run_deque();$/;"	p	signature:()
+run_deque.cpp	src/deque/run_deque.cpp	1;"	F
+run_deque.h	src/deque/run_deque.h	1;"	F
 run_vector	src/vector/run_vector.h	/^run_vector();$/;"	p	signature:()
+run_vector.cpp	src/vector/run_vector.cpp	1;"	F
+run_vector.h	src/vector/run_vector.h	1;"	F
+size	src/deque/deque.h	/^        int front,rear,size;$/;"	m	class:Deque	access:private
+size	src/deque/run_deque.cpp	/^    int size = d.get_size();$/;"	l
 size	src/vector/run_vector.cpp	/^    int size = v.get_size();$/;"	l
 size	src/vector/vector.h	/^    int size, capacity;$/;"	m	class:vector_base	access:public
+sources.mk	Debug/sources.mk	1;"	F
+specs.c	.metadata/.plugins/org.eclipse.cdt.make.core/specs.c	1;"	F
+specs.cpp	.metadata/.plugins/org.eclipse.cdt.make.core/specs.cpp	1;"	F
+subdir.mk	Debug/.metadata/.plugins/org.eclipse.cdt.make.core/subdir.mk	1;"	F
+subdir.mk	Debug/src/deque/subdir.mk	1;"	F
+subdir.mk	Debug/src/deque_w/subdir.mk	1;"	F
+subdir.mk	Debug/src/subdir.mk	1;"	F
+subdir.mk	Debug/src/vector/subdir.mk	1;"	F
 swap	src/vector/vector.h	/^    swap(vector_base& );$/;"	p	class:vector_base	access:public	signature:(vector_base& )
+vector.h	src/vector/vector.h	1;"	F
 vector_base	src/vector/vector.h	/^    vector_base(int c, int s);$/;"	p	class:vector_base	access:public	signature:(int c, int s)
 vector_base	src/vector/vector.h	/^  class vector_base$/;"	c
 vector_base::arr	src/vector/vector.h	/^    T *arr;$/;"	m	class:vector_base	access:public
@@ -141,8 +153,7 @@ vector_base::size	src/vector/vector.h	/^    int size, capacity;$/;"	m	class:vect
 vector_base::swap	src/vector/vector.h	/^    swap(vector_base& );$/;"	p	class:vector_base	access:public	signature:(vector_base& )
 vector_base::vector_base	src/vector/vector.h	/^    vector_base(int c, int s);$/;"	p	class:vector_base	access:public	signature:(int c, int s)
 vector_base::~vector_base	src/vector/vector.h	/^    ~vector_base();$/;"	p	class:vector_base	access:public	signature:()
-~Deque	src/deque/deque.h	/^  ~Deque();$/;"	p	class:Deque	access:public	signature:()
+~Deque	src/deque/deque.h	/^        ~Deque();$/;"	p	class:Deque	access:public	signature:()
 ~Deque	src/deque_w/deque_w.h	/^  ~Deque();$/;"	p	class:Deque	access:public	signature:()
-~Deque_Node	src/deque/deque.h	/^  ~Deque_Node();$/;"	p	class:Deque_Node	access:public	signature:()
 ~Vector	src/vector/vector.h	/^    ~Vector();$/;"	p	class:Vector	access:public	signature:()
 ~vector_base	src/vector/vector.h	/^    ~vector_base();$/;"	p	class:vector_base	access:public	signature:()

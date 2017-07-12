@@ -7,6 +7,10 @@
 
 #include "vector"
 #include <iostream>
+#include <boost/bind.hpp>
+#include <boost/lambda/loops.hpp>
+//using boost::lambda::_1;
+
 //#include "run_vector.h"
 
 template<typename T>
@@ -15,6 +19,8 @@ template<typename T>
   {
     int size = v.get_size();
     std::cout << "The array is : ";
+    int i=0;
+    boost::lambda::for_loop(_1=_1,_1<_3,++_1,std::cout<<_2[_1]<<",")(i,v,size);
     for (int i = 0; i < size; i++)
       {
         std::cout << v[i] << ",";
@@ -27,7 +33,7 @@ int
 run_vector()
 {
   Vector<int> v(5);
-  print_vector(v);
+  boost::bind(print_vector<int>,_1)(v);
   for (int i = 0; i < 5; i++)
     {
       v[i] = 1;

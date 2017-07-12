@@ -10,47 +10,34 @@
 #define ARRAY_SIZE 10
 #include <vector>
 
-class Deque_Node
-{
-  int front, rear;
-  //std::vector<int> arr(ARRAY_SIZE);
-public:
-  Deque_Node(int, int);
-  void
-  push_front(int&);
-  int
-  pop_front();
-  void
-  push_back(int&);
-  bool
-  is_empty();
-  bool
-  is_full();
-  ~Deque_Node();
-};
-
+template <class T>
 class Deque
 {
-  std::vector<Deque_Node *> node_list;
-public:
-  Deque();
-  Deque(int);
-  Deque(const Deque&);
-  ~Deque();
-  int&
-  at(int);
-  void
-  push_front(int);
-  void
-  push_back(int);
-  int
-  pop_front();
-  int
-  pop_back();
-  int&
-  operator[](int);
-  Deque
-  operator=(Deque&);
+        std::vector<std::vector<T> > node_list;
+        //front points to next element loc in front of the deque
+        //rear points to next element loc in rear of the deque
+        int front,rear,size;
+    public:
+        Deque();
+        Deque(int,T);
+        Deque(const Deque&);
+        ~Deque();
+        T&
+        at(int);
+        void
+        push_front(T&);
+        void
+        push_back(T&);
+        void 
+        pop_front();
+        void
+        pop_back();
+        T&
+        operator[](int);
+        int 
+        get_size();
+        Deque&
+        operator=(Deque&);
 };
 
 #endif /* DEQUE_H_ */

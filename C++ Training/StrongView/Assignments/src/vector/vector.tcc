@@ -5,19 +5,19 @@
 #include <memory>
 #include <algorithm>
 #include "vector.h"
+#include <boost/type_traits.hpp>
 
 template<class T>
-vector_base<T>::vector_base(int c,int s)
+vector_base<T>::vector_base(int c,int s) : arr(new T[c])
   {
     capacity = c;
-    arr = new T[capacity];
+    //    arr = new T[capacity];
     size = s;
   }
 
 template <class T>
 vector_base<T>::~vector_base()
   {
-    delete[] arr;
   }
 
 template<class T>
@@ -26,7 +26,7 @@ vector_base<T>::swap(vector_base<T>& v2)
   {
     std::swap(this->size,v2.size);
     std::swap(this->capacity,v2.capacity);
-    std::swap(this->arr,v2.arr);
+    this->arr.swap(v2.arr);
   }
 
 template<class T>
@@ -45,7 +45,7 @@ Vector<T>::Vector(const Vector &v) : vector_base<T>(v.capacity,v.size)
     for (int i = 0; i < v.size; i++)
       {
         //calls assignment operator
-        this->arr[i] = v[i];
+        this->arr.get()[i] = v[i];
       }
   }
 
@@ -53,7 +53,7 @@ template<class T>
 T&
 Vector<T>::operator[](int index) const
   {
-    return this->arr[index];
+    return this->arr.get()[index];
   }
 
 template<class T>
@@ -62,7 +62,7 @@ Vector<T>::at(const int index) const
   {
     if (index >= 0 && index < this->size)
       {
-        return this->arr[index];
+        return this->arr.get()[index];
       }
     else
       {
@@ -74,10 +74,14 @@ template<class T>
 void
 Vector<T>::destroy_elements()
   {
+    if(boost::has_nothrow_destructor<T>().value == true){
+    std::cout<<"Destroying Container Elements"<<std::endl;
     for(int i=0;i<this->size;i++)
       {
-        this->arr[i].~T();
+        this->arr.get()[i].~T();
       }
+    }
+    return;
   }
 
 template<class T>
@@ -96,16 +100,16 @@ Vector<T>::push_back(const T &ele)
         vector_base<T> temp_v(ncap,this->size);
         for (int i = 0; i < this->size; i++)
           {
-            temp_v.arr[i] = this->arr[i];
+            temp_v.arr.get()[i] = this->arr.get()[i];
           }
-        temp_v.arr[temp_v.size] = ele;
+        temp_v.arr.get()[temp_v.size] = ele;
         temp_v.size++;
         destroy_elements();
         temp_v.swap(*this);
       }
     else
       {
-        this->arr[this->size] = ele;
+        this->arr.get()[this->size] = ele;
         this->size++;
       }
   }
@@ -118,7 +122,7 @@ Vector<T>::pop_back()
       {
         return;
       }
-    this->arr[this->size - 1].~T();
+    this->arr.get()[this->size - 1].~T();
     this->size--;
     return;
   }
@@ -152,10 +156,14 @@ template<class T>
 Vector<T>
 Vector<T>::operator=(const Vector<T>& v)
   {
+    if(boost::has_trivial_assign<T>().value == true )
+    {
+        std::cout<<"If this is trivially assigned"<<std::endl;
+    }  
     vector_base<T> temp_v(v.capacity,v.size);
     for (int i = 0; i < v.size; i++)
       {
-        temp_v.arr[i] = v.arr[i];
+        temp_v.arr.get()[i] = v.arr.get()[i];
       }
     destroy_elements();
     temp_v.swap(*this);

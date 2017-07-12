@@ -1,12 +1,14 @@
 #ifndef VECTOR_H_
 #define VECTOR_H_
 #include <iostream>
+#include <boost/shared_ptr.hpp>
 
 template<class T>
   class vector_base
   {
   public:
-    T *arr;
+
+    boost::shared_ptr<T> arr;
     int size, capacity;
     vector_base(int c, int s);
     void

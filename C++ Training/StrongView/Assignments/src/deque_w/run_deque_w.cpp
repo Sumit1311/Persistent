@@ -1,17 +1,18 @@
 /*
+
  * run_deque.cpp
  *
  *  Created on: Jan 16, 2017
  *      Author: sumit
- */
-#include "deque"
+*/
+#include "deque_w"
 #include <iostream>
-#include "run_deque.h"
+#include "run_deque_w.h"
 
-void print_deque(Deque<int>& d)
+void print_deque(Deque_w<int>& d)
 {
     int size = d.get_size();
-    std::cout << "The elements in deque are : "<<endl;
+    std::cout << "The elements in deque are : "<<std::endl;
     for (int i = 0; i < size; i++)
     {
         std::cout << d.at(i) << ",";
@@ -20,27 +21,27 @@ void print_deque(Deque<int>& d)
 
 }
 
-int run_deque()
+int run_deque_w()
 {
-    Deque<int> d(5);
-    Deque<int> d_long(16);
+    Deque_w<int> d(5);
+    Deque_w<int> d_long(16);
     for(int i=0;i<16;i++)
-      {
-        d_long[i]=i;
-      }
-    Deque<int> d_longer(20);
+         {
+           d_long[i]=i;
+         }
+    Deque_w<int> d_longer(20);
     for(int i=0;i<20;i++)
-          {
-            d_longer[i]=i;
-          }
-    Deque<int> d_default;
+              {
+                d_longer[i]=i;
+              }
+    Deque_w<int> d_default;
     print_deque(d);
     print_deque(d_long);
     for (int i = 0; i < 5; i++)
-    {
-        d[i] = i;
-        d_long.push_back(i);
-    }
+        {
+            d[i] = i;
+            d_long.push_back(i);
+        }
     print_deque(d);
     int ele = 1;
     //push back
@@ -68,12 +69,10 @@ int run_deque()
     print_deque(d_long);
     d_long.pop_front();
     print_deque(d_long);
-    d_long.pop_front();
-    print_deque(d_long);
     d_longer.pop_back();
     print_deque(d_longer);
     d_longer.push_back(ele);
     print_deque(d_longer);
-    std::cout<<"Done"<<endl;
+    std::cout<<"Done"<<std::endl;
     return 1;
 }
