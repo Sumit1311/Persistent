@@ -1,0 +1,20 @@
+file:///data1/archive/artifacts/9_6_0/74/coverage_results/lcov.out/smCommon/smLicense/src/smLicenseHandler.cpp.gcov.html
+
+file:///data1/archive/artifacts/9_6_0/74/coverage_results/lcov.out/smCommon/smLicense/src/smMacAddress.cpp.gcov.html
+
+file:///data1/archive/artifacts/9_6_0/74/coverage_results/lcov.out/smServer/smInbound/src/smListener.cpp.gcov.html
+
+file:///data1/archive/artifacts/9_6_0/74/coverage_results/lcov.out/smTools/src/DnsStub/index.html
+
+file:///data1/archive/artifacts/9_6_0/74/coverage_results/lcov.out/smTools/src/smNFSMount.cpp.gcov.html
+
+file:///data1/archive/artifacts/9_6_0/74/coverage_results/lcov.out/smClient/src/smDummyConnectionPool.cpp.gcov.html
+
+############### smClientLicenseHandler_test ####################
+
+TESTS += smClientLicenseHandler_test
+
+smClientLicenseHandler_test_SOURCES = \
+   smClientLicenseHandler_test.cpp 
+ 
+############### smClientLicenseHandler_test ####################

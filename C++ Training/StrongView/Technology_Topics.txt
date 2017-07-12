@@ -1,0 +1,59 @@
+1. TECHNOLOGY TOPICS
+	- C++ BOOST – BOOST::SHARED_PTR, BOOST::BIND, BOOST::FUNCTION, BOOST::MULTI_INDEX_CONTAINER, BOOST::LAMBDA, BOOST::LEXICAL_CAST, BOOST::ALOGRITHM - 19 Jan
+	DONE :
+		- NON-BLOCKING I/O
+		- DATA STRUCTURE COMPLEXITIES – TREES, HEAPS, ARRAYS, LINKED LISTS, TREES USING ARRAYS.
+		- ALGORITHMS – HEAP SORT, MERGE SORT, QUICK SORT, LRU, CACHE CONCEPTS.
+		- SHARED MEMORY CONCEPTS.
+		- SYNCHRONIZATION PRIMITIVES CONCEPTS
+		- RECURSION
+		- C++ RAII IDIOM
+		- C++ TEMPLATES, C++ CRTP.
+		- REACTOR PATTERN
+		- Linux Tools :
+			- strace : tracing system calls
+			- pmap : memory map of process
+			- lsof : http://linoxide.com/how-tos/lsof-command-list-process-id-information/
+			- netstat : http://www.binarytides.com/linux-netstat-command-examples/
+			- gdb - http://www.yolinux.com/TUTORIALS/GDB-Commands.html
+			- gcc - http://linuxcommand.org/man_pages/gcc1.html
+			- make - https://www.gnu.org/software/make/manual/make.html
+			- automake - https://www.gnu.org/software/automake/manual/automake.html
+			- autoconf - https://www.gnu.org/software/autoconf/manual/autoconf.html
+		- STL :
+			- Allocators(Need more clarification) : http://www.drdobbs.com/a-quick-and-simple-memory-allocator/184403440
+						   http://www.codeguru.com/cpp/cpp/cpp_mfc/stl/article.php/c4079/Allocators-STL.htm
+			- Type traits(Need more clarification) : http://blog.aaronballman.com/2011/11/a-simple-introduction-to-type-traits/
+			- STD::UNORDERED, STD::VECTOR, STD::STRING, STD::MAP, STD::DEQUE, ,STD::QUEUE, STD::SET
+			- Exception Safety
+		- C++ Boost :
+			- SHARED_PTR : Shared pointer ownership of the pointer is shared
+			- BIND : Used to provide the functions to be made compatible with the function with different number of parameters (_1 to _9)
+			- LAMBDA : For annonymous function. Different constructs should have different function templates
+			- LEXICAL_CAST : Convert the number to and from string. Type should have << and >> operators overloaded
+			- FUNCTION : Like function pointer. Template parameter is return_type(argument_types).
+						For binding a class member function.
+		- System Calls :
+			- fork()
+			- execev() : overwrites current program with the program in filename. If the current 				program is being ptraced, a SIGTRAP signal is sent to it after a successful execve().
+			- mmap() : Memory Mapped I/O this can be backed by a file or not. May be shared if needed
+			- open() : opening the file
+			- socket() : create a fiel descriptor
+			- bind() : bind socket to a address
+			- listen() : listen for connections
+			- accept() : wait for connections
+			- signal() : sets the handler for given signal num
+			- fcntl() : http://www.informit.com/articles/article.aspx?p=99706&seqNum=13 
+						http://www.informit.com/articles/article.aspx?p=23618&seqNum=4
+			- select() : https://www.gnu.org/software/libc/manual/html_node/Server-Example.html
+			- poll() : http://www.linux-mag.com/id/357
+			- SEM_INIT : http://man7.org/linux/man-pages/man7/sem_overview.7.html
+			- SHM_INIT : http://man7.org/linux/man-pages/man7/shm_overview.7.html
+2. PROTOCOL
+	- SMTP - 19 Jan
+	- DNS - 19 Jan
+	- MIME - 20 Jan
+	- DKIM - 20 Jan
+	- HTTP - 19 Jan
+	- HTTPS - 20 Jan
+	- TLS/SSL - 20 Jan

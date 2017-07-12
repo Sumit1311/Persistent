@@ -1,0 +1,14 @@
+/*
+ * deque
+ *
+ *  Created on: Jan 16, 2017
+ *      Author: sumit
+ */
+
+#ifndef DEQUE_W
+#define DEQUE_W
+
+#include "deque_w.h"
+#include "deque_w.tcc"
+
+#endif /* DEQUE_ */

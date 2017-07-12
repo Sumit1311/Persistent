@@ -1,0 +1,18 @@
+  185  vim config/strongmail-server.conf 
+  186  vim config/strongmail-server.conf 
+  187  vim config/domain-variables.conf 
+  188  vim config/strongmail-mailboxes.conf 
+  185  ./strongmail-eas/sm-client mailing
+  186  ls -tlr data/mailings/
+  187  vim data/mailings/mailingcfg.sample 
+  188  ./strongmail-eas/sm-client mailing
+  189  vim data/mailings/mailingcfg.sample 
+  190  vim data/databases/testdb.sample 
+  191  ./strongmail-eas/sm-client mailing start /data1/strongmail/data/mailings/mailingcfg.sample 
+  192  ./strongmail-eas/sm-client mailing start /data1/strongmail/data/mailings/mailingcfg.sample 
+  193  ./strongmail-eas/sm-client tmailing start /data1/strongmail/data/mailings/mailingcfg.sample 
+  194  ./strongmail-eas/sm-client tmailing load /data1/strongmail/data/mailings/mailingcfg.sample 
+
+
+//Unit test commands
+make -C cdebug/smCommon/smSocketLibrary/test TESTS=smBaseSocket_test check-TESTS
