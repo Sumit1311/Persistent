@@ -12,6 +12,11 @@
 
 static void test_sleep (int thread_cnt, int iterations);
 
+void test_alarm_simple (void)
+{
+    test_sleep(1,2);
+}
+
 void
 test_alarm_single (void) 
 {

@@ -13,14 +13,14 @@ clean::
 distclean:: clean
 	find . -name '*~' -exec rm '{}' \;
 
-TAGS_SUBDIRS = $(BUILD_SUBDIRS) devices lib
+TAGS_SUBDIRS = $(BUILD_SUBDIRS) devices lib tests
 TAGS_SOURCES = find $(TAGS_SUBDIRS) -name \*.[chS] -print
 
 TAGS::
 	etags --members `$(TAGS_SOURCES)`
 
 tags::
-	ctags -T --no-warn `$(TAGS_SOURCES)`
+	ctags `$(TAGS_SOURCES)`
 
 cscope.files::
 	$(TAGS_SOURCES) > cscope.files
